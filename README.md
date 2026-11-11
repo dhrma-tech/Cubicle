@@ -162,7 +162,7 @@ Only YouTube is supported. Instagram and X have no open feed, their embeds need 
 
 ## Ask AI
 
-Ask AI is a chat page powered by Gemini. It never invents videos: it can only call these tools, and every video id is checked against the catalogue before it is shown.
+Ask AI is a floating side panel on every page, powered by Gemini. It is closed by default, opens with one tap, and can read the page you are on (visible text, the videos listed, the video you are watching) so you can ask about it. It never invents videos: it can only call these tools, and every video id is checked against the catalogue before it is shown.
 
 | Tool | What it does |
 |---|---|
