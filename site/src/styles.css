@@ -832,3 +832,10 @@ main:has(> .ai) { padding: 0; animation: none; overflow: hidden; }
   @keyframes sheet-up { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
 }
 @media (prefers-reduced-motion: reduce) { .sc-sheet, .sc-sheet-wrap { animation: none; } }
+
+/* Ask AI shortcut beside search */
+.top-r { display: flex; align-items: center; }
+.ask-btn { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--wash); color: var(--ink); transition: background .15s, transform .15s; }
+.ask-btn:hover { background: color-mix(in srgb, var(--ink) 12%, transparent); }
+.ask-btn:active { transform: scale(.94); }
+@media (max-width: 1000px) { .top-r { display: none; } }

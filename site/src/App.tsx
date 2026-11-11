@@ -164,7 +164,7 @@ export default function App() {
           <span className="search-in"><input ref={searchRef} type="search" placeholder="Search videos, channels, topics" aria-label="Search videos" defaultValue={p0 === "browse" ? route.q.get("q") ?? "" : ""} key={p0 === "browse" ? route.q.get("q") ?? "" : "x"} /></span>
           <button type="submit" className="search-btn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4.2-4.2" /></svg></button>
         </form>
-        <div className="top-r" />
+        <div className="top-r"><a className="ask-btn" href="#/ai" aria-label="Ask AI" title="Ask AI (g a)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M11 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 3v4M17 5h4M5 17v4M3 19h4" /></svg></a></div>
       </header>
 
       <nav className="rail" aria-label="Main">
