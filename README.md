@@ -17,7 +17,7 @@ Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). DEV Tube nar
 - Save videos to **Liked**, **Watch later** and **Done**, with a progress page, and undo any action
 - Use keyboard shortcuts (`j` / `k` to move, `w` to save, `d` to mark done, `/` to search)
 - Open **Explore** for "What's happening in AI": trending stories from Hacker News, official lab blogs, newsletters, new papers and open-source repos, with save, read and "new since your last visit" markers
-- Switch between light and dark themes, and pick a mid-video or uploader thumbnail
+- Open **Pro-Scroll** for a vertical feed of productive YouTube Shorts (AI, coding tips, DSA, systems, math, career, focus) with a daily goal, streak, save and "got it" actions, and a prompt to move on to a full lecture when you finish, and pick a mid-video or uploader thumbnail
 - Export your progress as a file, or download the full dataset and build your own version
 
 ## Who This README Is For
@@ -143,6 +143,21 @@ The Explore page is built from free sources, with no keys:
 
 `pipeline/07_fetch_news.py` writes `site/public/data/news.json`. Run `python pipeline/07_fetch_news.py` to refresh it, then commit the file to redeploy. To refresh automatically every 2 hours, move `docs/news-workflow.yml` to `.github/workflows/news.yml`. Reddit blocks automated access, so it is tried but usually skipped.
 
+## Pro-Scroll: Productive Shorts
+
+Pro-Scroll is a swipeable Shorts feed that stops when you have had enough. Pick a daily goal (5, 10, 20 or 30). A Short counts after 3 seconds on screen. When you reach the goal, the page points you to a full lecture or the syllabus instead of scrolling forever.
+
+No API key is needed. Every YouTube channel has a Shorts-only playlist (the channel id with `UC` replaced by `UUSH`), and its public RSS feed lists the 15 latest Shorts with title, date and views. `pipeline/08_fetch_shorts.py` reads those feeds for about 200 channels (a hand-picked list plus the top channels in the catalogue), then:
+
+1. Drops sponsored, off-topic and entertainment titles, and requires an on-topic title.
+2. Sorts each Short into a track by title keywords.
+3. Scores it: log of views × freshness (1 year half-life), plus a boost for beating the channel's own median.
+4. Keeps at most 8 per channel and writes `site/public/data/shorts.json`.
+
+In the feed, the same channel never appears twice in a row, Shorts you have already seen go to the back, and each visit shuffles the order slightly. Keys: `j` / `k` move, `s` saves, `d` marks "got it", `m` toggles sound, space pauses.
+
+Only YouTube is supported. Instagram and X have no open feed, their embeds need their own scripts and a login, and they block automated access.
+
 ## Tech Stack
 
 - **Site:** Vite, React 18, TypeScript (strict), plain CSS, hash routing, no server
@@ -215,6 +230,7 @@ dev-tube/
 │   ├── 05b_llm_label.py       optional Claude Haiku labels
 │   ├── 06_score_export.py     scoring, freshness, JSON and data zip
 │   ├── 07_fetch_news.py       Explore page news (free sources)
+│   ├── 08_fetch_shorts.py     Pro-Scroll Shorts (no key)
 │   ├── build_taxonomy.py      generates the syllabus
 │   └── run_all.py             runs everything in order
 ├── site/                Vite + React static site

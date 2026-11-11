@@ -1,5 +1,5 @@
 # Optional: move this file to .github/workflows/news.yml to refresh the Explore page every 2 hours.
-# It runs pipeline/07_fetch_news.py and commits site/public/data/news.json, which redeploys the site on Vercel.
+# It runs pipeline/07_fetch_news.py and pipeline/08_fetch_shorts.py and commits the two JSON files, which redeploys the site on Vercel.
 name: Refresh AI news
 
 on:
@@ -23,9 +23,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python pipeline/07_fetch_news.py
+      - name: Fetch Shorts (keeps the last good file if YouTube blocks the runner)
+        run: python pipeline/08_fetch_shorts.py || true
       - name: Commit if changed
         run: |
           git config user.name "dev-tube-bot"
           git config user.email "dev-tube-bot@users.noreply.github.com"
-          git add site/public/data/news.json
+          git add site/public/data/news.json site/public/data/shorts.json
           git diff --cached --quiet || (git commit -m "Refresh AI news" && git push)
