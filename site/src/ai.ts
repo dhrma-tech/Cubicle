@@ -88,7 +88,8 @@ async function callGemini(body: Record<string, unknown>, thinking = true, mi = 0
     if (r.status === 503) throw new AIError("not_configured");
     if (r.status === 504 || j.error === "timeout") throw new AIError("timeout");
     if (j.error === "busy") throw new AIError("busy", String((j as { detail?: string }).detail ?? ""));
-    if (j.error === "server_key") { let m = ""; try { m = (JSON.parse(String((j as { detail?: string }).detail)) as { error?: { message?: string } }).error?.message ?? ""; } catch { m = String((j as { detail?: string }).detail ?? "").slice(0, 160); } throw new AIError("server_key", m); }
+    if (j.error === "server_key") { let m = ""; if ((j as { detail?: string }).detail) try { m = (JSON.parse(String((j as { detail?: string }).detail)) as { error?: { message?: string } }).error?.message ?? ""; } catch { m = String((j as { detail?: string }).detail ?? "").slice(0, 160); } throw new AIError("server_key", m); }
+    if (r.status === 403 && j.error === "forbidden_origin") throw new AIError("forbidden");
     if (r.status === 429) throw new AIError(j.error === "daily_limit" ? "daily_limit" : "quota");
   } else {
     if (r.status === 401 || r.status === 403 || (r.status === 400 && /api key|api_key/i.test(gm))) throw new AIError("bad_key", gm);
@@ -110,6 +111,7 @@ const ERR: Record<string, { text: string; key?: boolean }> = {
   blocked: { text: "Gemini declined to answer that. Try rewording it." },
   empty: { text: "Gemini returned nothing. Try again." },
   upstream: { text: "The AI service had a problem. Try again in a moment." },
+  forbidden: { text: "The shared AI only works from the official site. Add your own free Gemini key to use it elsewhere.", key: true },
 };
 
 /* ---------- catalogue helpers ---------- */

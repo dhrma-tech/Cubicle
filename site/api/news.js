@@ -10,9 +10,10 @@ const clean = (s, n = 210) => {
   s = String(s || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   return s.length <= n ? s : s.slice(0, n).replace(/\s+\S*$/, "").replace(/[,;:.\-\s]+$/, "") + "…";
 };
+const web = (u) => (/^https?:\/\//i.test(String(u || "")) ? String(u) : null);
 const mk = (src, name, g, title, url, ts, sc = 0, cm = 0, cu = null, d = "", a = null) => ({
-  id: `${src}:${createHash("md5").update(norm(url)).digest("hex").slice(0, 10)}`, s: src, sn: name, g, t: clean(title, 160), u: url,
-  ts: Math.floor(ts), sc: Math.floor(sc || 0), cm: Math.floor(cm || 0), cu, d: clean(d), a,
+  id: `${src}:${createHash("md5").update(norm(url)).digest("hex").slice(0, 10)}`, s: src, sn: name, g, t: clean(title, 160), u: web(url) || "#",
+  ts: Math.floor(ts), sc: Math.floor(sc || 0), cm: Math.floor(cm || 0), cu: web(cu), d: clean(d), a,
 });
 const get = async (url) => { const r = await fetch(url, { headers: UA, signal: AbortSignal.timeout(12_000) }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); };
 
@@ -58,5 +59,6 @@ export default async function handler(req, res) {
     try { const r = await fn(); items.push(...r); sources.push({ id, count: r.length, ok: true, error: null }); }
     catch (e) { sources.push({ id, count: 0, ok: false, error: String(e.message || e).slice(0, 120) }); }
   }));
-  res.status(200).json({ updated: new Date().toISOString().replace(/\.\d+Z$/, "Z"), items, sources });
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.status(200).json({ updated: new Date().toISOString().replace(/\.\d+Z$/, "Z"), items: items.filter((i) => i.u !== "#"), sources });
 }

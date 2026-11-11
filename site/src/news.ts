@@ -49,7 +49,12 @@ const hot = (i: NewsItem) => {
 };
 
 /** Merge live items over the static snapshot: live sources are replaced, everything else is kept. */
-function merge(cur: NewsData, live: NewsData): NewsData {
+/** Only http(s) links may reach an href. Anything else (javascript:, data:) is dropped. */
+const web = (u: string | null | undefined) => (typeof u === "string" && /^https?:\/\//i.test(u) ? u : null);
+const clean = (d: NewsData): NewsData => ({ ...d, items: (d.items || []).filter((i) => web(i.u)).map((i) => ({ ...i, cu: web(i.cu) })) });
+
+function merge(cur: NewsData, live0: NewsData): NewsData {
+  const live = clean(live0);
   const kept = cur.items.filter((i) => !LIVE.has(i.s));
   const urls = new Set(kept.map((i) => norm(i.u)));
   const fresh: NewsItem[] = [];
@@ -76,7 +81,7 @@ export function useNewsData() {
     setError(null);
     fetch(`./data/news.json?t=${Math.floor(Date.now() / 300000)}-${tick}`)
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() as Promise<NewsData>; })
-      .then((d) => { if (!off) setData(d); })
+      .then((d) => { if (!off) setData(clean(d)); })
       .catch((e) => { if (!off) setError(String(e.message || e)); });
     return () => { off = true; };
   }, [tick]);
@@ -90,7 +95,7 @@ export function useNewsData() {
       let base = cur.current;
       try {
         const r = await fetch(`./data/news.json?t=${Date.now()}`, { cache: "no-store" });
-        if (r.ok) base = (await r.json()) as NewsData;
+        if (r.ok) base = clean((await r.json()) as NewsData);
       } catch { /* keep what is on screen */ }
       if (!base) throw new Error("no data");
       let live = false; let next = base;

@@ -8,3 +8,8 @@ __pycache__/
 .env
 .env.local
 .DS_Store
+.env.*
+!.env.example
+*.pem
+*.key
+node_modules

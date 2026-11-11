@@ -1,24 +1,41 @@
 # Cubicle
 
-**A YouTube for AI and ML engineers, with no algorithm: only videos that several independent people and course lists recommend.**
+**A quiet place to learn AI and ML from YouTube, using only videos that several independent people recommend.**
 
-Cubicle is a free, static website that collects the best YouTube videos for machine learning, AI engineering, programming, DSA, system design and job prep, and lays them out as a syllabus. A video is listed only when more than one independent source vouches for it: Hacker News commenters, university course pages, GitHub roadmaps, and a short list of trusted channels. It has no accounts, no tracking and no backend. Everything you do (likes, watch later, progress) stays in your own browser.
+Cubicle is a free, login-free catalogue of the best YouTube videos for machine learning, AI engineering, programming, DSA, system design and interview prep, laid out as a syllabus. A video is listed only when more than one independent source vouches for it: Hacker News commenters, university course pages, GitHub roadmaps, and a short list of trusted channels. On top of the catalogue sit study tools: notes, spaced review, a daily plan, focus mode and an optional AI study guide.
 
-Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). Cubicle narrows the idea to one audience and adds a learning order, freshness scoring and an interview-prep layer.
+There are no accounts and no tracking. Your progress lives in your own browser.
+
+Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). Cubicle narrows the idea to one audience and adds a learning order, freshness scoring and a study layer.
+
+![Cubicle home](docs/shots/home.png)
 
 ---
 
-## What You Can Do
+## Features
 
-- Browse a YouTube-style home feed with topic chips, hover previews and a three-dot menu on every video
-- Follow a **syllabus** of 12 sections and about 100 topics, from Python to LLM internals to MLOps
-- See **why** each video is here: how many Hacker News users and course lists recommended it, shown as amber vouch dots
-- Spot **outdated** tutorials: every video has a freshness bar, and old tool-specific videos are tagged "May be outdated"
-- Save videos to **Liked**, **Watch later** and **Done**, with a progress page, and undo any action
-- Use keyboard shortcuts (`j` / `k` to move, `w` to save, `d` to mark done, `/` to search)
-- Open **Explore** for "What's happening in AI": trending stories from Hacker News, official lab blogs, newsletters, new papers and open-source repos, with save, read and "new since your last visit" markers
-- Switch between light and dark themes, and pick a mid-video or uploader thumbnail
-- Export your progress as a file, or download the full dataset and build your own version
+- **Syllabus:** 12 sections and about 100 topics, from Python to LLM internals to MLOps
+- **Why it is here:** each video shows how many Hacker News users and course lists recommended it
+- **Freshness:** a freshness bar on every video, and a "May be outdated" tag on old tool-specific tutorials
+- **Library:** Liked, Watch later and Done, with a progress page and undo
+- **Explore:** what is happening in AI right now, from Hacker News, lab blogs, papers and new repos
+- **Ask AI:** a study guide that searches the catalogue, builds a plan, and quizzes you
+- **Shortcuts:** `j` / `k` move, `w` save, `d` done, `/` search, `n` note, Ctrl or Cmd + K command palette
+- **Themes:** light and dark, responsive down to phones, installable as an app
+
+| Syllabus | Watch page |
+| --- | --- |
+| ![Syllabus](docs/shots/syllabus.png) | ![Watch page](docs/shots/watch.png) |
+
+| Study plan | Skill map |
+| --- | --- |
+| ![Plan](docs/shots/plan.png) | ![Skills](docs/shots/skills.png) |
+
+| Dark | Mobile |
+| --- | --- |
+| ![Dark](docs/shots/home-dark.png) | <img src="docs/shots/mobile.png" width="260" alt="Mobile"> |
+
+---
 
 ## Study Tools
 
@@ -36,37 +53,61 @@ Everything below is local to the browser (key `devtube.study.v1`). Use Settings,
 | Command palette (Ctrl or Cmd + K) | Everywhere |
 | Installable app and share target: share a YouTube link to Cubicle and Ask AI proposes it | Browser install prompt |
 
-## Who This README Is For
-
-Anyone. You do not need to be a developer to run it. If you only want to **watch**, open the live site (add the link here once deployed). If you want to **run or rebuild it**, the steps below are written for beginners.
-
 ---
 
-## Setup Option 1: Run The Site (no keys needed)
+## Quick Start
 
-The data is already built, so the site runs as is.
+You need Node.js 18 or newer. No keys are required to run the site.
 
-### Step 1: Install Node.js
-Install Node.js **20 or newer** from [nodejs.org](https://nodejs.org).
-
-### Step 2: Get the project
 ```bash
 git clone https://github.com/dhrma-tech/dev-tube.git
 cd dev-tube/site
-```
-
-### Step 3: Install and start
-```bash
 npm install
 npm run dev
 ```
 
-### Step 4: Open it
-Go to `http://localhost:5173` in your browser.
+Open the address it prints (usually http://localhost:5173).
+
+The Ask AI feature needs a provider key. Without one, visitors can paste their own free Gemini key in the Ask AI panel. See [Ask AI and environment variables](#ask-ai-and-environment-variables).
+
+## Deploy (Vercel)
+
+1. Import the repo in Vercel and set **Root Directory** to `site`.
+2. Build command `npm run build`, output directory `dist` (the defaults).
+3. Add environment variables (below) under Settings, Environment Variables, then redeploy.
+
+Security headers and a Content Security Policy are set in `site/vercel.json`. If you add a new third-party origin (analytics, fonts, another API), add it to the policy or the browser will block it.
+
+## Ask AI and environment variables
+
+Ask AI calls `site/api/chat.js`, a serverless proxy. Provider keys exist only as Vercel environment variables, never in the browser or the repo. Providers are tried in order; if one is busy, rate limited or rejects its key, the next one answers. One key is enough.
+
+| Variable | Purpose | Default |
+| --- | --- | --- |
+| `GEMINI_API_KEY` | Google Gemini | `gemini-3.6-flash`, then `gemini-3.5-flash-lite` |
+| `GROQ_API_KEY` | Groq | `llama-3.3-70b-versatile` |
+| `ANTHROPIC_API_KEY` | Anthropic Claude | `claude-haiku-5-5` |
+| `OPENAI_API_KEY` | OpenAI or any compatible host via `OPENAI_BASE_URL` | `gpt-4.1-mini` |
+| `AI_PROVIDERS` | Provider order | `gemini,groq,anthropic,openai` |
+| `AI_DAILY_LIMIT` | Requests per visitor per day | `40` |
+| `AI_GLOBAL_DAILY_LIMIT` | Requests per day across all visitors | `3000` |
+| `ALLOWED_ORIGINS` | Extra origins allowed to call the proxy, comma separated. Your own host is always allowed | empty |
+| `AI_DEBUG` | Set to `1` to return upstream error details | off |
+| `GEMINI_MODEL`, `GROQ_MODEL`, `ANTHROPIC_MODEL`, `OPENAI_MODEL` | Override models | |
+
+Also set a monthly spend cap in each provider's dashboard. The in-code rate limits are per serverless instance and best effort, so the provider cap is your real ceiling.
+
+The data pipeline uses separate variables: `YT_API_KEY` (YouTube Data API, restrict it to that API in Google Cloud) and `ANTHROPIC_API_KEY` for the optional labeling pass. Never commit a key; `.env` files are git-ignored.
+
+## Security
+
+The threat model, protections and how to report a problem are in [SECURITY.md](SECURITY.md). In short: no secrets in the repo, an origin-checked and rate-limited AI proxy, strict CSP and security headers, validated inputs, http(s)-only links, and no accounts or server-side user data.
 
 ---
 
-## Setup Option 2: Rebuild The Data (bigger and fresher catalogue)
+## Rebuild The Data (optional)
+
+The repo ships with a built catalogue. To refresh or grow it, use the Python pipeline in `pipeline/`.
 
 The data pipeline is in Python. It works without any key, but a free YouTube key adds durations, publish dates and whole channels and playlists, which makes the catalogue much larger.
 
@@ -112,28 +153,6 @@ The finished static site is in `site/dist`.
 
 ---
 
-## Product Preview
-
-### Home
-![Home feed](docs/shots/home-yt.png)
-
-### Syllabus
-![Syllabus](docs/shots/learn.png)
-
-### Topic page
-![Topic page](docs/shots/node.png)
-
-### Watch page
-![Watch page](docs/shots/watch.png)
-
-### Interview prep
-![Interview prep](docs/shots/prep.png)
-
-### Dark theme and mobile
-![Dark theme](docs/shots/home-yt-dark.png)
-![Mobile](docs/shots/home-yt-mobile.png)
-
----
 
 ## How It Works
 
@@ -144,6 +163,8 @@ The finished static site is in `site/dist`.
 5. **Score.** Score = vouch signal × (0.5 + 0.5 × freshness). The vouch signal counts distinct Hacker News users, recommending comments, course lists and channel trust.
 6. **Freshness.** Freshness = 0.5 ^ (age ÷ half-life). Half-life is 10 years for evergreen topics, 3 years for semi-fresh and 1 year for fast-moving ones. A non-evergreen video below 0.4 is tagged "May be outdated".
 7. **Export.** Up to 150 videos per topic are written to JSON for the site, plus a downloadable data zip with a `DATA.md` file.
+
+---
 
 ## Explore: What's Happening In AI
 
@@ -159,15 +180,18 @@ The Explore page is built from free sources, with no keys:
 
 `pipeline/07_fetch_news.py` writes `site/public/data/news.json`. Run `python pipeline/07_fetch_news.py` to refresh it, then commit the file to redeploy. To refresh automatically every 2 hours, move `docs/news-workflow.yml` to `.github/workflows/news.yml`. Reddit blocks automated access, so it is tried but usually skipped.
 
+---
+
 ## Tech Stack
 
-- **Site:** Vite, React 18, TypeScript (strict), plain CSS, hash routing, no server
-- **State:** your browser's localStorage, no accounts
-- **Fonts:** Bricolage Grotesque and Instrument Sans, bundled locally (no CDN)
+- **Site:** Vite, React 18, TypeScript (strict), plain CSS, hash routing
+- **State:** browser localStorage, no accounts
+- **API:** three small Vercel serverless functions in `site/api` (`chat`, `news`, `video`)
+- **Fonts:** Bricolage Grotesque and Instrument Sans, bundled locally
 - **Pipeline:** Python, DuckDB over the Hugging Face `open-index/hacker-news` Parquet files, YouTube oEmbed and Data API v3
 - **Videos:** embedded with `youtube-nocookie.com`
 
-## Common Commands
+## Commands
 
 | Command | What it does |
 |---|---|
@@ -178,38 +202,24 @@ The Explore page is built from free sources, with no keys:
 | `python run_all.py --api --skip-hn` | Run with the YouTube API, reusing cached Hacker News data |
 | `python run_all.py --api --llm --skip-hn` | Also run the optional Claude Haiku labeling pass |
 
-## Environment Variables
 
-These are used only by the Python pipeline. The website itself never uses any key.
+## Privacy
 
-| Variable | Required | What it does |
-|---|---|---|
-| `YT_API_KEY` | Optional, recommended | Free YouTube Data API key. Adds durations, publish dates, channel and playlist expansion |
-| `ANTHROPIC_API_KEY` | Optional | Enables the Claude Haiku labeling pass for better topics and levels |
-
-Never commit a key. `.env` files are ignored by `.gitignore`.
-
----
-
-## Project Status
-
-A finished single-purpose static site. The catalogue depends on the data you build or ship, and grows when you run the pipeline with an API key.
+- No accounts, no analytics, no cookies set by Cubicle
+- Likes, notes, history, plans and progress stay in your browser (localStorage)
+- Ask AI sends your message and a short slice of catalogue context to the AI provider through the proxy, or straight to Google if you use your own key. Do not type anything private into it
+- A key you paste into the panel is stored in your browser only; clear it in Settings
+- YouTube sees embed requests (served via `youtube-nocookie.com`)
+- Settings, Erase everything clears all local data
 
 ## Known Limitations
 
-- Without a YouTube API key, the catalogue is small and has no durations or exact publish dates
+- Without a YouTube API key, rebuilt data has no durations or exact publish dates
 - Topic labels come from keyword rules unless you run the LLM pass, so some videos are misfiled
-- Hacker News leans toward programmers, so topics like math for ML and research papers are thinner
+- Hacker News leans toward programmers, so math for ML and research papers are thinner
 - A recommendation is a signal, not proof a video is good
-- No automated tests yet; the site was checked with browser tests during development
-- Videos can be deleted or blocked on YouTube later, so the data should be refreshed from time to time
-
-## Privacy and Your Data
-
-- No accounts, no analytics, no cookies set by Cubicle
-- Likes, history and progress stay in your browser and never leave it
-- Hover previews and the watch page load YouTube embeds through `youtube-nocookie.com`; YouTube sees those requests
-- Use **Settings, Erase everything** to clear all local data
+- No automated test suite yet; the site was checked with browser tests during development
+- Videos can be deleted or blocked on YouTube later, so refresh the data from time to time
 
 ## Data Sources and Licenses
 
@@ -220,7 +230,7 @@ A finished single-purpose static site. The catalogue depends on the data you bui
 ## Folder Structure
 
 ```text
-dev-tube/
+cubicle/
 ├── pipeline/            Python data pipeline
 │   ├── 01_extract_hn.py       read Hacker News archive, extract YouTube links
 │   ├── 02_extract_sources.py  read GitHub lists, syllabi, channels
@@ -233,7 +243,7 @@ dev-tube/
 │   ├── 07_fetch_news.py       Explore page news (free sources)
 │   ├── build_taxonomy.py      generates the syllabus
 │   └── run_all.py             runs everything in order
-├── site/                Vite + React static site
+├── site/                Vite + React site and API
 │   └── src/                   App, views, components, store, data, styles
 ├── data/
 │   ├── seeds.json             channels, syllabus pages, GitHub lists
@@ -242,28 +252,13 @@ dev-tube/
 │   ├── PLAN.md                build plan
 │   └── shots/                 screenshots
 ├── LICENSE
+├── SECURITY.md
 └── README.md
 ```
 
-## Project Files To Know
-
-| File | Purpose |
-|---|---|
-| `data/seeds.json` | The curated starting points: trusted channels, syllabus pages and GitHub lists. Edit this to add sources |
-| `pipeline/build_taxonomy.py` | Defines the syllabus sections, topics and their keywords |
-| `pipeline/06_score_export.py` | Scoring and freshness logic |
-| `site/src/store.ts` | All browser-side state (likes, later, done, hidden, settings) |
-| `site/src/components.tsx` | Video card, hover preview, menu and toasts |
-| `site/src/views.tsx` | Every page of the site |
-| `docs/PLAN.md` | Why the project works the way it does |
-
-## Important Notice Before Deploying
-
-The site is fully static and safe to host anywhere (Vercel, Cloudflare Pages, GitHub Pages). Build command `npm run build`, output folder `site/dist`, root folder `site`. Never put an API key into the `site` folder.
-
 ## Contributing
 
-Issues and pull requests are welcome, especially for new trusted channels, syllabus sources and better topic keywords. Keep changes small and describe what source or rule you changed.
+Issues and pull requests are welcome, especially new trusted channels, syllabus sources and better topic keywords. Keep changes small and describe the source or rule you changed. Report security problems privately, as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
@@ -272,16 +267,3 @@ MIT. See [LICENSE](LICENSE).
 ## Author
 
 Built by **Dharmaraj Aparadh** ([@dhrma-tech](https://github.com/dhrma-tech)).
-
-## Ask AI providers
-
-Ask AI runs through `site/api/chat.js`, so keys stay on the server. Add any of these in Vercel (Settings, Environment Variables) and redeploy. Providers are tried in order. If one is busy, rate limited or rejects its key, the next one answers.
-
-| Variable | Provider | Default model |
-| --- | --- | --- |
-| `GEMINI_API_KEY` | Google Gemini (AI Studio keys, including `AQ.` ones) | `gemini-3.6-flash`, then `gemini-3.5-flash-lite` |
-| `GROQ_API_KEY` | Groq | `llama-3.3-70b-versatile` |
-| `ANTHROPIC_API_KEY` | Anthropic Claude | `claude-haiku-5-5` |
-| `OPENAI_API_KEY` | OpenAI, or any OpenAI-compatible host via `OPENAI_BASE_URL` | `gpt-4.1-mini` |
-
-Optional: `AI_PROVIDERS` (order, default `gemini,groq,anthropic,openai`), `GEMINI_MODEL`, `GROQ_MODEL`, `ANTHROPIC_MODEL`, `OPENAI_MODEL`, `AI_DAILY_LIMIT` (per visitor, default 60). One key is enough. Visitors can also paste their own Gemini key in the panel; it stays in their browser.

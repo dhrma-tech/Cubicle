@@ -1,9 +1,13 @@
 {
-  "name": "devtube",
+  "name": "cubicle",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "scripts": { "dev": "vite", "build": "tsc --noEmit && vite build", "preview": "vite preview --host 0.0.0.0 --port 4173" },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173"
+  },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.1.0",
     "@fontsource-variable/instrument-sans": "^5.1.0",
@@ -16,5 +20,19 @@
     "@vitejs/plugin-react": "^4.3.1",
     "typescript": "^5.5.4",
     "vite": "^5.4.0"
-  }
+  },
+  "description": "Cubicle: a free, login-free study catalogue of the best YouTube videos for AI, ML and AI engineering, with spaced review, notes, focus mode and an AI study guide.",
+  "license": "MIT",
+  "homepage": "https://github.com/dhrma-tech/dev-tube",
+  "author": "dhrma-tech",
+  "keywords": [
+    "ai",
+    "machine-learning",
+    "youtube",
+    "learning",
+    "react",
+    "vite",
+    "pwa",
+    "study"
+  ]
 }

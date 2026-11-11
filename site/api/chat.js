@@ -2,17 +2,24 @@
 // Providers are tried in order and the next one takes over when one is busy, rate limited or rejects the key.
 // Set at least one key in Vercel (Settings, Environment Variables):
 //   GEMINI_API_KEY, GROQ_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY (OPENAI_BASE_URL works for OpenRouter, Together, etc.)
+// Abuse controls: same-origin POSTs only (ALLOWED_ORIGINS adds more hosts), AI_DAILY_LIMIT per visitor (default 40), AI_GLOBAL_DAILY_LIMIT (default 3000),
+// small request bodies, function declarations only. Also set a spend cap at each provider: the in-memory counters are best effort.
 // Optional: AI_PROVIDERS (order, default "gemini,groq,anthropic,openai"), GEMINI_MODEL, GROQ_MODEL, ANTHROPIC_MODEL, OPENAI_MODEL, AI_DAILY_LIMIT.
 // The per-visitor limit is kept in memory, so it is best effort: it resets when the function restarts.
 import { forGemini, fromAnthropic, fromOpenAI, toAnthropic, toOpenAI } from "./_providers.js";
 
 const env = process.env;
-const LIMIT = Number(env.AI_DAILY_LIMIT || 60);
+const LIMIT = Number(env.AI_DAILY_LIMIT || 40);
+const GLOBAL_LIMIT = Number(env.AI_GLOBAL_DAILY_LIMIT || 3000);   // per warm instance, a coarse brake on total spend
+const DEBUG = env.AI_DEBUG === "1";
 const hits = new Map();
 const BUDGET_MS = 54_000;
 
+let globalDay = "", globalN = 0;
 function allowed(ip) {
   const day = new Date().toISOString().slice(0, 10);
+  if (globalDay !== day) { globalDay = day; globalN = 0; }
+  if (++globalN > GLOBAL_LIMIT) return { ok: false, left: 0 };
   const k = `${day}|${ip}`;
   const n = (hits.get(k) || 0) + 1;
   if (hits.size > 5000) for (const key of hits.keys()) if (!key.startsWith(day)) hits.delete(key);
@@ -88,17 +95,26 @@ export const config = { maxDuration: 60 };
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Content-Type-Options", "nosniff");
   if (req.method !== "POST") return res.status(405).json({ error: "method" });
+  // Browsers always send Origin (or Referer) on a POST. Accept only our own site, so other websites cannot use this endpoint with a visitor's browser.
+  const host = String(req.headers.host || "").toLowerCase();
+  const from = String(req.headers.origin || req.headers.referer || "");
+  let fromHost = ""; try { fromHost = new URL(from).host.toLowerCase(); } catch { /* none */ }
+  const extra = String(env.ALLOWED_ORIGINS || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
+  if (!fromHost || (fromHost !== host && !extra.includes(fromHost))) return res.status(403).json({ error: "forbidden_origin" });
   const order = String(env.AI_PROVIDERS || "gemini,groq,anthropic,openai").split(",").map((s) => s.trim().toLowerCase()).filter((id) => PROVIDERS[id] && PROVIDERS[id].key());
   if (!order.length) return res.status(503).json({ error: "not_configured" });
 
-  const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
-  if (JSON.stringify(body).length > 250_000) return res.status(413).json({ error: "too_large" });
-  if (!Array.isArray(body.contents) || !body.contents.length) return res.status(400).json({ error: "bad_request" });
+  let body;
+  try { body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {}; } catch { return res.status(400).json({ error: "bad_request" }); }
+  if (!body || typeof body !== "object" || JSON.stringify(body).length > 150_000) return res.status(413).json({ error: "too_large" });
+  if (!Array.isArray(body.contents) || !body.contents.length || body.contents.length > 80) return res.status(400).json({ error: "bad_request" });
+  if (body.systemInstruction && JSON.stringify(body.systemInstruction).length > 30_000) return res.status(413).json({ error: "too_large" });
   // only function declarations are allowed: no search grounding, code execution or other paid tools
   body.tools = Array.isArray(body.tools) ? body.tools.filter((t) => t && t.functionDeclarations).map((t) => ({ functionDeclarations: t.functionDeclarations })) : [];
 
-  const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown").split(",")[0].trim();
+  const ip = String(req.headers["x-real-ip"] || req.headers["x-vercel-forwarded-for"] || req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown").split(",")[0].trim();
   const lim = allowed(ip);
   res.setHeader("x-ai-left", String(lim.left));
   if (!lim.ok) return res.status(429).json({ error: "daily_limit" });
@@ -117,7 +133,7 @@ export default async function handler(req, res) {
     console.error("ai provider failed", id, r.status, String(r.text).slice(0, 300));
   }
   const keyOnly = failures.length && failures.every((f) => f.status === 401 || f.status === 403);
-  if (keyOnly) return res.status(502).json({ error: "server_key", detail: failures[0].detail });
+  if (keyOnly) return res.status(502).json({ error: "server_key", ...(DEBUG ? { detail: failures[0].detail } : {}) });
   if (failures.every((f) => f.status === 429)) return res.status(429).json({ error: "quota" });
-  return res.status(failures.some((f) => f.status === 504) && failures.length === 1 ? 504 : 502).json({ error: failures.some((f) => f.status === 504) && failures.length === 1 ? "timeout" : "busy", detail: failures.map((f) => `${f.id} ${f.status}`).join(", ") });
+  return res.status(failures.some((f) => f.status === 504) && failures.length === 1 ? 504 : 502).json({ error: failures.some((f) => f.status === 504) && failures.length === 1 ? "timeout" : "busy", ...(DEBUG ? { detail: failures.map((f) => `${f.id} ${f.status}`).join(", ") } : {}) });
 }
