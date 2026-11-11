@@ -8,9 +8,7 @@ import { addProposed, type Answer, type Chat, type Item, type Question } from ".
 import { geminiKey, userActions, useUserData } from "./userdata";
 import { LEVEL_NAME } from "./data";
 
-export const Spark = ({ size = 22 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18" /></svg>
-);
+export const Spark = ({ size = 22 }: { size?: number }) => <img className="spark-img" src="./ai.png" width={size} height={size} alt="" aria-hidden="true" draggable={false} />;
 const hours = (secs: number) => (secs >= 3600 ? `${Math.floor(secs / 3600)} h ${Math.round((secs % 3600) / 60)} min` : `${Math.max(1, Math.round(secs / 60))} min`);
 const total = (ids: string[], data: Data) => ids.reduce((n, id) => n + (data.byId.get(id)?.d ?? 0), 0);
 

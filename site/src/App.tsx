@@ -4,7 +4,7 @@ import { useStore, actions } from "./store";
 import { go, Toaster } from "./components";
 import { Explore } from "./explore";
 import { Scroll } from "./scroll";
-import { PlaylistView, Playlists } from "./aipage";
+import { PlaylistView, Playlists, Spark } from "./aipage";
 import { Watch } from "./watch";
 import { Palette } from "./palette";
 import { FollowingPage, newCount, PlanPage, QueuePage, ReviewPage, SkillsPage, TodayCard } from "./studypages";
@@ -197,14 +197,14 @@ export default function App() {
           <span className="search-in"><input ref={searchRef} type="search" placeholder="Search videos, channels, topics" aria-label="Search videos" defaultValue={p0 === "browse" ? route.q.get("q") ?? "" : ""} key={p0 === "browse" ? route.q.get("q") ?? "" : "x"} /></span>
           <button type="submit" className="search-btn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4.2-4.2" /></svg></button>
         </form>
-        <div className="top-r"><button type="button" className="ask-btn" onClick={toggleAI} aria-label="Ask AI" aria-expanded={aiOpen} title="Ask AI (g a)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M11 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 3v4M17 5h4M5 17v4M3 19h4" /></svg></button></div>
+        <div className="top-r"><button type="button" className="ask-btn" onClick={toggleAI} aria-label="Ask AI" aria-expanded={aiOpen} title="Ask AI (g a)"><Spark size={30} /></button></div>
       </header>
 
       <nav className="rail" aria-label="Main">
         {link("#/", "Home", "home", "home")}
         {link("#/explore", "Explore", "explore", "explore")}
         {link("#/scroll", "Pro-Scroll", "scroll", "scroll", undefined, active === "scroll", "Scroll")}
-        <button type="button" className={"nav" + (aiOpen ? " on" : "")} title="Ask AI" onClick={() => { toggleAI(); setRailOpen(false); }}><Ico n="ai" /><span className="lb"><span className="lg">Ask AI</span><span className="sh">Ask AI</span></span></button>
+        <button type="button" className={"nav" + (aiOpen ? " on" : "")} title="Ask AI" onClick={() => { toggleAI(); setRailOpen(false); }}><span className="ic ai-ic"><Spark size={28} /></span><span className="lb"><span className="lg">Ask AI</span><span className="sh">Ask AI</span></span></button>
         <button type="button" className="nav" title="Quick find (Ctrl or Cmd + K)" onClick={() => { setPal(true); setRailOpen(false); }}><Ico n="find" /><span className="lb"><span className="lg">Quick find</span><span className="sh">Find</span></span></button>
         {link("#/learn", "Syllabus", "learn", "learn")}
         {link("#/prep", "Interview prep", "prep", "prep", undefined, active === "prep", "Prep")}

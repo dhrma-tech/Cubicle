@@ -81,12 +81,12 @@ export function AIPanel({ data }: { data: Data }) {
   return (
     <>
       <button className={"aip-fab" + (open ? " hide" : "")} onClick={toggleAI} aria-label="Ask AI" aria-expanded={open} title="Ask AI (g a)" tabIndex={open ? -1 : 0}>
-        <Spark size={24} />
+        <Spark size={44} />
       </button>
       <div className={"aip-scrim" + (open ? " on" : "")} onClick={closeAI} />
       <aside className={"aip" + (open ? " open" : "")} aria-label="Ask AI" aria-hidden={!open}>
         <header className="aip-head">
-          <span className="ai-who"><span className="aip-logo"><Spark size={16} /></span>Ask AI</span>
+          <span className="ai-who"><span className="aip-logo"><Spark size={24} /></span>Ask AI</span>
           <div>
             {!empty ? <button className="ai-ghost" onClick={() => chat.reset()} disabled={chat.busy}>New chat</button> : null}
             <button className="ai-ghost" onClick={() => setKeyOpen((o) => !o)} aria-expanded={keyOpen}>{u.key ? "Your key" : "Key"}</button>
@@ -99,7 +99,7 @@ export function AIPanel({ data }: { data: Data }) {
         <div className="aip-scroll">
           {empty ? (
             <div className="aip-hero">
-              <span className="ai-mark"><Spark size={26} /></span>
+              <span className="ai-mark"><Spark size={46} /></span>
               <h2>Ask about this page</h2>
               <p>I can see what you see. Ask about a video, a term, or anything here. I can also plan what to learn next and build playlists from the catalogue.</p>
               <div className="ai-starters">{tips.map((s) => <button key={s} onClick={() => void chat.send(s)}>{s}</button>)}</div>
@@ -109,7 +109,7 @@ export function AIPanel({ data }: { data: Data }) {
               {chat.items.map((it, k) => {
                 switch (it.kind) {
                   case "user": return <div key={k} className="ai-msg me"><p>{it.text}</p></div>;
-                  case "text": return <div key={k} className="ai-msg"><span className="ai-mark sm"><Spark size={15} /></span><div className="ai-text">{it.text.split(/\n{2,}/).map((p, j) => <p key={j}>{p}</p>)}</div></div>;
+                  case "text": return <div key={k} className="ai-msg"><span className="ai-mark sm"><Spark size={26} /></span><div className="ai-text">{it.text.split(/\n{2,}/).map((p, j) => <p key={j}>{p}</p>)}</div></div>;
                   case "ask": return <AskCard key={k} item={it} chat={chat} />;
                   case "playlist": return <PlaylistCard key={k} item={it} data={data} chat={chat} />;
                   case "video": return <VideoCard key={k} item={it} data={data} chat={chat} />;

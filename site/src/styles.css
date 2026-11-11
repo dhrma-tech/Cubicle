@@ -1003,3 +1003,13 @@ button.nav { background: none; border: 0; width: 100%; font: inherit; color: inh
 .pal-i span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pal-i small{color:var(--moss);white-space:nowrap;flex:none}
 .pal-i.on{background:var(--wash)}
+
+/* Ask AI mark: iridescent glass on a dark disc */
+.spark-img{display:block;object-fit:contain;pointer-events:none}
+.ask-btn{background:#0a0a0a;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .14)}
+.ask-btn:hover{background:#1a1a1a}
+.aip-fab{background:radial-gradient(120% 120% at 30% 20%,#1d1d22,#050507) !important}
+.aip-logo{width:30px;height:30px;background:#0a0a0a;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .14)}
+.ai-mark{background:#0a0a0a;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .14)}
+.ai-ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#0a0a0a;flex:none}
+.shell.mini .nav .ai-ic{width:30px;height:30px}
