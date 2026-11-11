@@ -1,0 +1,48 @@
+{
+ "github_readmes": [
+  {"label":"dair-ai/ML-YouTube-Courses","url":"https://raw.githubusercontent.com/dair-ai/ML-YouTube-Courses/main/README.md"},
+  {"label":"Developer-Y/cs-video-courses","url":"https://raw.githubusercontent.com/Developer-Y/cs-video-courses/master/README.md"},
+  {"label":"mlabonne/llm-course","url":"https://raw.githubusercontent.com/mlabonne/llm-course/main/README.md"},
+  {"label":"microsoft/generative-ai-for-beginners","url":"https://raw.githubusercontent.com/microsoft/generative-ai-for-beginners/main/README.md"},
+  {"label":"microsoft/ML-For-Beginners","url":"https://raw.githubusercontent.com/microsoft/ML-For-Beginners/main/README.md"},
+  {"label":"mrdbourke/pytorch-deep-learning","url":"https://raw.githubusercontent.com/mrdbourke/pytorch-deep-learning/main/README.md"},
+  {"label":"ossu/computer-science","url":"https://raw.githubusercontent.com/ossu/computer-science/master/README.md"},
+  {"label":"ChristosChristofidis/awesome-deep-learning","url":"https://raw.githubusercontent.com/ChristosChristofidis/awesome-deep-learning/master/README.md"},
+  {"label":"Hannibal046/Awesome-LLM","url":"https://raw.githubusercontent.com/Hannibal046/Awesome-LLM/main/README.md"},
+  {"label":"NirDiamant/RAG_Techniques","url":"https://raw.githubusercontent.com/NirDiamant/RAG_Techniques/main/README.md"},
+  {"label":"NirDiamant/GenAI_Agents","url":"https://raw.githubusercontent.com/NirDiamant/GenAI_Agents/main/README.md"},
+  {"label":"promptslab/Awesome-Prompt-Engineering","url":"https://raw.githubusercontent.com/promptslab/Awesome-Prompt-Engineering/main/README.md"},
+  {"label":"donnemartin/system-design-primer","url":"https://raw.githubusercontent.com/donnemartin/system-design-primer/master/README.md"},
+  {"label":"jwasham/coding-interview-university","url":"https://raw.githubusercontent.com/jwasham/coding-interview-university/main/README.md"},
+  {"label":"kdn251/interviews","url":"https://raw.githubusercontent.com/kdn251/interviews/master/README.md"},
+  {"label":"chiphuyen/machine-learning-systems-design","url":"https://raw.githubusercontent.com/chiphuyen/machine-learning-systems-design/master/README.md"},
+  {"label":"ZuzooVn/machine-learning-for-software-engineers","url":"https://raw.githubusercontent.com/ZuzooVn/machine-learning-for-software-engineers/master/README.md"},
+  {"label":"practical-tutorials/project-based-learning","url":"https://raw.githubusercontent.com/practical-tutorials/project-based-learning/master/README.md"},
+  {"label":"EbookFoundation/free-programming-books","url":"https://raw.githubusercontent.com/EbookFoundation/free-programming-books/main/courses/free-courses-en.md"}
+ ],
+ "syllabus_pages": [
+  {"label":"Stanford CS224N","url":"https://web.stanford.edu/class/cs224n/"},
+  {"label":"Stanford CS231N","url":"https://cs231n.stanford.edu/"},
+  {"label":"Stanford CS229","url":"https://cs229.stanford.edu/"},
+  {"label":"Stanford CS336","url":"https://stanford-cs336.github.io/spring2025/"},
+  {"label":"Stanford CS25","url":"https://web.stanford.edu/class/cs25/"},
+  {"label":"MIT 6.S191","url":"http://introtodeeplearning.com/"},
+  {"label":"fast.ai","url":"https://course.fast.ai/"},
+  {"label":"Hugging Face LLM course","url":"https://huggingface.co/learn/llm-course/chapter1/1"},
+  {"label":"roadmap.sh AI Engineer","url":"https://roadmap.sh/ai-engineer"},
+  {"label":"Full Stack Deep Learning","url":"https://fullstackdeeplearning.com/"},
+  {"label":"CMU 10-414 DL Systems","url":"https://dlsyscourse.org/"},
+  {"label":"Berkeley CS294 LLM Agents","url":"https://llmagents-learning.org/f24"}
+ ],
+ "channels": [
+  {"handle":"AndrejKarpathy","hint":"llm"},{"handle":"3blue1brown","hint":"math"},{"handle":"statquest","hint":"ml"},
+  {"handle":"NeetCode","hint":"dsa"},{"handle":"takeUforward","hint":"dsa"},{"handle":"abdul_bari","hint":"dsa"},
+  {"handle":"stanfordonline","hint":"dl"},{"handle":"MITOCW","hint":"math"},{"handle":"DeepLearningAI","hint":"aieng"},
+  {"handle":"freecodecamp","hint":"programming"},{"handle":"umarjamilai","hint":"llm"},{"handle":"YannicKilcher","hint":"papers"},
+  {"handle":"aiDotEngineer","hint":"aieng"},{"handle":"ByteByteGo","hint":"sysdesign"},{"handle":"hnasr","hint":"sysdesign"},
+  {"handle":"GPUMODE","hint":"infra"},{"handle":"cs50","hint":"programming"},{"handle":"ArjanCodes","hint":"programming"},
+  {"handle":"mCoding","hint":"programming"},{"handle":"sentdex","hint":"programming"},{"handle":"TwoMinutePapers","hint":"papers"},
+  {"handle":"HuggingFace","hint":"aieng"},{"handle":"NVIDIADeveloper","hint":"infra"},{"handle":"anthropic-ai","hint":"aieng"},
+  {"handle":"Computerphile","hint":"programming"},{"handle":"MachineLearningStreetTalk","hint":"papers"}
+ ]
+}

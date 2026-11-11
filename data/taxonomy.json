@@ -1,0 +1,1769 @@
+{
+ "sections": [
+  {
+   "id": "programming",
+   "title": "Programming",
+   "blurb": "Python, tooling and the software skills AI engineers need",
+   "nodes": [
+    {
+     "id": "py-basics",
+     "title": "Python fundamentals",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "python tutorial",
+      "python for beginners",
+      "python basics",
+      "learn python",
+      "python crash course",
+      "python full course"
+     ]
+    },
+    {
+     "id": "py-advanced",
+     "title": "Advanced Python",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "decorators",
+      "generators",
+      "metaclass",
+      "python internals",
+      "asyncio",
+      "python concurrency",
+      "python typing",
+      "type hints",
+      "dataclasses",
+      "pydantic",
+      "python performance"
+     ]
+    },
+    {
+     "id": "py-data",
+     "title": "NumPy, Pandas, Matplotlib",
+     "shelf": "semi",
+     "level": "beginner",
+     "keywords": [
+      "numpy",
+      "pandas",
+      "matplotlib",
+      "seaborn",
+      "data analysis python",
+      "polars",
+      "data wrangling"
+     ]
+    },
+    {
+     "id": "py-web",
+     "title": "FastAPI and backends for AI",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "fastapi",
+      "flask",
+      "rest api",
+      "uvicorn",
+      "websocket",
+      "streaming api",
+      "backend for ai"
+     ]
+    },
+    {
+     "id": "sql",
+     "title": "SQL and databases",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "sql tutorial",
+      "postgres",
+      "postgresql",
+      "sql for data",
+      "database tutorial",
+      "sqlite",
+      "query optimization"
+     ]
+    },
+    {
+     "id": "ts-js",
+     "title": "TypeScript for AI apps",
+     "shelf": "semi",
+     "level": "beginner",
+     "keywords": [
+      "typescript",
+      "javascript",
+      "node.js",
+      "next.js",
+      "react",
+      "ai sdk",
+      "vercel ai"
+     ]
+    },
+    {
+     "id": "tooling",
+     "title": "Git, Linux, Docker, shell",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "git tutorial",
+      "github",
+      "linux command",
+      "bash",
+      "shell scripting",
+      "vim",
+      "terminal",
+      "docker tutorial",
+      "ssh",
+      "regex"
+     ]
+    },
+    {
+     "id": "testing",
+     "title": "Testing",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "pytest",
+      "unit testing",
+      "test driven",
+      "tdd",
+      "integration testing",
+      "mocking"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cs",
+   "title": "CS Foundations and Software Craft",
+   "blurb": "The computer science and engineering fundamentals interviews and real jobs test",
+   "nodes": [
+    {
+     "id": "cs-os",
+     "title": "Operating systems",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "operating system",
+      "operating systems",
+      "os course",
+      "linux kernel",
+      "virtual memory",
+      "process scheduling",
+      "threads and concurrency",
+      "unix",
+      "file system",
+      "filesystem"
+     ]
+    },
+    {
+     "id": "cs-net",
+     "title": "Networking and the web",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "computer networks",
+      "computer networking",
+      "tcp",
+      "http",
+      "dns",
+      "tls",
+      "how the internet works",
+      "networking basics",
+      "websockets",
+      "http/3",
+      "quic"
+     ]
+    },
+    {
+     "id": "cs-arch",
+     "title": "Computer architecture and low level",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "computer architecture",
+      "cpu",
+      "assembly",
+      "memory hierarchy",
+      "cache",
+      "risc-v",
+      "nand2tetris",
+      "how computers work",
+      "from nand to tetris",
+      "pipelining",
+      "simd"
+     ]
+    },
+    {
+     "id": "cs-lang",
+     "title": "Languages, compilers and interpreters",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "compiler",
+      "interpreter",
+      "programming languages",
+      "sicp",
+      "structure and interpretation",
+      "lisp",
+      "type system",
+      "type systems",
+      "rust language",
+      "golang",
+      "c++",
+      "c programming",
+      "llvm",
+      "parsing"
+     ]
+    },
+    {
+     "id": "cs-craft",
+     "title": "Software engineering craft and architecture",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "software engineering",
+      "software architecture",
+      "clean code",
+      "design patterns",
+      "code quality",
+      "refactoring",
+      "simple made easy",
+      "technical debt",
+      "microservices",
+      "monolith",
+      "debugging",
+      "code review",
+      "software design",
+      "engineering culture",
+      "hammock driven"
+     ]
+    },
+    {
+     "id": "cs-security",
+     "title": "Security and cryptography basics",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "cryptography",
+      "web security",
+      "owasp",
+      "authentication",
+      "oauth",
+      "encryption",
+      "security engineering",
+      "hashing passwords",
+      "jwt"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dsa",
+   "title": "DSA and Coding Interviews",
+   "blurb": "Data structures, algorithms and problem-solving patterns",
+   "nodes": [
+    {
+     "id": "dsa-full",
+     "title": "Full DSA courses",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "data structures and algorithms",
+      "dsa full course",
+      "dsa course",
+      "algorithms course",
+      "data structures course",
+      "dsa roadmap",
+      "dsa in python",
+      "dsa in c++"
+     ]
+    },
+    {
+     "id": "dsa-complexity",
+     "title": "Complexity and Big-O",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "big o",
+      "time complexity",
+      "space complexity",
+      "asymptotic",
+      "amortized"
+     ]
+    },
+    {
+     "id": "dsa-arrays",
+     "title": "Arrays, strings, hashing",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "array problems",
+      "string problems",
+      "hash map",
+      "hashmap",
+      "hash table",
+      "prefix sum",
+      "kadane"
+     ]
+    },
+    {
+     "id": "dsa-pointers",
+     "title": "Two pointers and sliding window",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "two pointers",
+      "sliding window",
+      "fast and slow pointer",
+      "kadane"
+     ]
+    },
+    {
+     "id": "dsa-linked",
+     "title": "Linked lists, stacks, queues",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "linked list",
+      "stack data structure",
+      "queue data structure",
+      "monotonic stack",
+      "stacks and queues",
+      "deque"
+     ]
+    },
+    {
+     "id": "dsa-search-sort",
+     "title": "Binary search and sorting",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "binary search",
+      "merge sort",
+      "quick sort",
+      "quicksort",
+      "sorting algorithm",
+      "heap sort"
+     ]
+    },
+    {
+     "id": "dsa-trees",
+     "title": "Trees, BST, tries",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "binary tree",
+      "binary search tree",
+      "bst",
+      "trie",
+      "segment tree",
+      "fenwick",
+      "tree traversal",
+      "avl"
+     ]
+    },
+    {
+     "id": "dsa-graphs",
+     "title": "Graphs and shortest paths",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "graph algorithm",
+      "bfs",
+      "dfs",
+      "dijkstra",
+      "topological sort",
+      "union find",
+      "disjoint set",
+      "minimum spanning tree",
+      "bellman ford",
+      "graph theory"
+     ]
+    },
+    {
+     "id": "dsa-heaps",
+     "title": "Heaps and priority queues",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "heap data structure",
+      "binary heap",
+      "priority queue",
+      "top k elements",
+      "heapify",
+      "heaps"
+     ]
+    },
+    {
+     "id": "dsa-backtracking",
+     "title": "Recursion and backtracking",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "backtracking",
+      "recursion explained",
+      "recursive",
+      "permutations and",
+      "n queens",
+      "n-queens"
+     ]
+    },
+    {
+     "id": "dsa-dp",
+     "title": "Dynamic programming",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "dynamic programming",
+      "dp problems",
+      "knapsack",
+      "memoization",
+      "longest common subsequence"
+     ]
+    },
+    {
+     "id": "dsa-greedy-bits",
+     "title": "Greedy and bit manipulation",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "greedy algorithm",
+      "bit manipulation",
+      "bitwise",
+      "intervals"
+     ]
+    },
+    {
+     "id": "dsa-practice",
+     "title": "LeetCode patterns and practice",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "leetcode",
+      "neetcode",
+      "blind 75",
+      "grind 75",
+      "leetcode patterns",
+      "coding interview problems",
+      "striver",
+      "sde sheet",
+      "competitive programming",
+      "codeforces"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "math",
+   "title": "Math for ML",
+   "blurb": "Linear algebra, calculus, probability, statistics and optimization",
+   "nodes": [
+    {
+     "id": "linalg",
+     "title": "Linear algebra",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "linear algebra",
+      "eigenvalues",
+      "eigenvectors",
+      "matrix multiplication",
+      "svd",
+      "singular value",
+      "vector spaces",
+      "matrix calculus"
+     ]
+    },
+    {
+     "id": "calculus",
+     "title": "Calculus and gradients",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "calculus",
+      "derivatives",
+      "gradient",
+      "chain rule",
+      "jacobian",
+      "partial derivative",
+      "multivariable calculus"
+     ]
+    },
+    {
+     "id": "probability",
+     "title": "Probability",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "probability",
+      "bayes theorem",
+      "random variables",
+      "distributions",
+      "expectation",
+      "markov chain",
+      "central limit"
+     ]
+    },
+    {
+     "id": "stats",
+     "title": "Statistics",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "statistics",
+      "hypothesis testing",
+      "confidence interval",
+      "p-value",
+      "regression analysis",
+      "statistical inference",
+      "bayesian statistics",
+      "a/b testing"
+     ]
+    },
+    {
+     "id": "optimization",
+     "title": "Optimization",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "gradient descent",
+      "convex optimization",
+      "stochastic gradient",
+      "adam optimizer",
+      "optimization algorithms",
+      "lagrange"
+     ]
+    },
+    {
+     "id": "info-theory",
+     "title": "Information theory",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "information theory",
+      "entropy",
+      "kl divergence",
+      "cross entropy",
+      "mutual information"
+     ]
+    },
+    {
+     "id": "math-for-ml",
+     "title": "Math for ML (combined)",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "math for machine learning",
+      "mathematics for machine learning",
+      "math for deep learning",
+      "math for ai"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ml",
+   "title": "Machine Learning",
+   "blurb": "Classical ML from fundamentals to evaluation",
+   "nodes": [
+    {
+     "id": "ml-intro",
+     "title": "ML fundamentals and full courses",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "machine learning course",
+      "machine learning tutorial",
+      "introduction to machine learning",
+      "machine learning full course",
+      "andrew ng",
+      "cs229",
+      "machine learning for beginners"
+     ]
+    },
+    {
+     "id": "ml-supervised",
+     "title": "Regression and classification",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "linear regression",
+      "logistic regression",
+      "classification",
+      "naive bayes",
+      "knn",
+      "k-nearest",
+      "svm",
+      "support vector"
+     ]
+    },
+    {
+     "id": "ml-trees",
+     "title": "Trees and ensembles",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "decision tree",
+      "random forest",
+      "gradient boosting",
+      "xgboost",
+      "lightgbm",
+      "catboost",
+      "bagging",
+      "boosting"
+     ]
+    },
+    {
+     "id": "ml-unsupervised",
+     "title": "Unsupervised learning",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "clustering",
+      "k-means",
+      "pca",
+      "principal component",
+      "dimensionality reduction",
+      "t-sne",
+      "umap",
+      "anomaly detection",
+      "gaussian mixture"
+     ]
+    },
+    {
+     "id": "ml-features",
+     "title": "Feature engineering and data",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "feature engineering",
+      "data cleaning",
+      "data preprocessing",
+      "imbalanced",
+      "missing values",
+      "feature selection",
+      "data leakage"
+     ]
+    },
+    {
+     "id": "ml-eval",
+     "title": "Model evaluation",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "cross validation",
+      "bias variance",
+      "overfitting",
+      "regularization",
+      "roc auc",
+      "precision recall",
+      "confusion matrix",
+      "hyperparameter",
+      "model evaluation",
+      "metrics"
+     ]
+    },
+    {
+     "id": "ml-sklearn",
+     "title": "scikit-learn and tabular ML",
+     "shelf": "semi",
+     "level": "beginner",
+     "keywords": [
+      "scikit-learn",
+      "sklearn",
+      "tabular data",
+      "kaggle tutorial",
+      "automl"
+     ]
+    },
+    {
+     "id": "ml-timeseries",
+     "title": "Time series and forecasting",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "time series",
+      "forecasting",
+      "arima",
+      "prophet",
+      "temporal"
+     ]
+    },
+    {
+     "id": "ml-recsys",
+     "title": "Recommender systems",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "recommender system",
+      "recommendation system",
+      "collaborative filtering",
+      "matrix factorization",
+      "two tower",
+      "ranking model"
+     ]
+    },
+    {
+     "id": "ml-theory",
+     "title": "Learning theory",
+     "shelf": "evergreen",
+     "level": "advanced",
+     "keywords": [
+      "learning theory",
+      "vc dimension",
+      "pac learning",
+      "generalization",
+      "statistical learning",
+      "bayesian machine learning",
+      "probabilistic machine learning",
+      "graphical models"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dl",
+   "title": "Deep Learning",
+   "blurb": "Neural networks, architectures and training",
+   "nodes": [
+    {
+     "id": "dl-intro",
+     "title": "Neural networks and backprop",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "neural network",
+      "backpropagation",
+      "deep learning course",
+      "deep learning tutorial",
+      "micrograd",
+      "perceptron",
+      "deep learning for beginners",
+      "3blue1brown neural"
+     ]
+    },
+    {
+     "id": "dl-pytorch",
+     "title": "PyTorch and frameworks",
+     "shelf": "semi",
+     "level": "beginner",
+     "keywords": [
+      "pytorch",
+      "tensorflow",
+      "jax",
+      "keras",
+      "autograd",
+      "torch.compile",
+      "pytorch lightning"
+     ]
+    },
+    {
+     "id": "dl-cnn",
+     "title": "CNNs and computer vision",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "convolutional",
+      "cnn",
+      "computer vision",
+      "image classification",
+      "object detection",
+      "yolo",
+      "resnet",
+      "vision transformer",
+      "segmentation",
+      "opencv"
+     ]
+    },
+    {
+     "id": "dl-seq",
+     "title": "RNNs and sequence models",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "rnn",
+      "lstm",
+      "gru",
+      "sequence model",
+      "seq2seq",
+      "word2vec",
+      "nlp course"
+     ]
+    },
+    {
+     "id": "dl-training",
+     "title": "Training, optimization and regularization",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "batch normalization",
+      "dropout",
+      "learning rate schedule",
+      "weight initialization",
+      "training neural networks",
+      "mixed precision",
+      "hyperparameter tuning",
+      "debugging neural"
+     ]
+    },
+    {
+     "id": "dl-generative",
+     "title": "Generative models and diffusion",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "diffusion model",
+      "stable diffusion",
+      "gan",
+      "generative adversarial",
+      "vae",
+      "variational autoencoder",
+      "flow matching",
+      "image generation"
+     ]
+    },
+    {
+     "id": "dl-rl",
+     "title": "Reinforcement learning",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "reinforcement learning",
+      "q-learning",
+      "policy gradient",
+      "ppo",
+      "deep q",
+      "markov decision",
+      "rl course",
+      "dqn"
+     ]
+    },
+    {
+     "id": "dl-multimodal",
+     "title": "Speech, audio and multimodal",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "speech recognition",
+      "whisper",
+      "text to speech",
+      "multimodal",
+      "clip",
+      "audio model",
+      "vision language"
+     ]
+    },
+    {
+     "id": "dl-selfsup",
+     "title": "Self-supervised and representation learning",
+     "shelf": "evergreen",
+     "level": "advanced",
+     "keywords": [
+      "self-supervised",
+      "contrastive learning",
+      "representation learning",
+      "transfer learning",
+      "simclr",
+      "dino"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "llm",
+   "title": "LLM Internals",
+   "blurb": "How language models actually work",
+   "nodes": [
+    {
+     "id": "llm-zero",
+     "title": "Build GPT from scratch",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "let's build gpt",
+      "build gpt",
+      "zero to hero",
+      "nanogpt",
+      "makemore",
+      "build a llm from scratch",
+      "llm from scratch",
+      "build llama",
+      "karpathy"
+     ]
+    },
+    {
+     "id": "llm-tokens",
+     "title": "Tokenization",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "tokenizer",
+      "tokenization",
+      "byte pair encoding",
+      "bpe",
+      "sentencepiece"
+     ]
+    },
+    {
+     "id": "llm-attention",
+     "title": "Transformers and attention",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "transformer",
+      "attention is all you need",
+      "self-attention",
+      "multi-head attention",
+      "positional encoding",
+      "rope",
+      "rotary embedding",
+      "transformer architecture"
+     ]
+    },
+    {
+     "id": "llm-embeddings",
+     "title": "Embeddings and representations",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "embeddings",
+      "embedding model",
+      "sentence embeddings",
+      "vector representation",
+      "contrastive embedding"
+     ]
+    },
+    {
+     "id": "llm-pretrain",
+     "title": "Pretraining and scaling laws",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "pretraining",
+      "scaling laws",
+      "chinchilla",
+      "data curation",
+      "training llm",
+      "llm training",
+      "pre-training"
+     ]
+    },
+    {
+     "id": "llm-post",
+     "title": "Post-training: SFT, RLHF, DPO",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "rlhf",
+      "dpo",
+      "instruction tuning",
+      "post-training",
+      "grpo",
+      "reward model",
+      "preference optimization",
+      "alignment",
+      "constitutional ai"
+     ]
+    },
+    {
+     "id": "llm-inference-internals",
+     "title": "KV cache and inference internals",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "kv cache",
+      "flash attention",
+      "flashattention",
+      "paged attention",
+      "speculative decoding",
+      "continuous batching",
+      "inference optimization",
+      "decoding strategies",
+      "sampling temperature"
+     ]
+    },
+    {
+     "id": "llm-efficiency",
+     "title": "Quantization, distillation, MoE",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "quantization",
+      "gguf",
+      "awq",
+      "gptq",
+      "distillation",
+      "mixture of experts",
+      "moe",
+      "pruning",
+      "sparse attention",
+      "model compression"
+     ]
+    },
+    {
+     "id": "llm-reasoning",
+     "title": "Reasoning models",
+     "shelf": "fast",
+     "level": "advanced",
+     "keywords": [
+      "reasoning model",
+      "chain of thought",
+      "test-time compute",
+      "o1",
+      "deepseek r1",
+      "reasoning llm",
+      "thinking model"
+     ]
+    },
+    {
+     "id": "llm-interp",
+     "title": "Interpretability and safety",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "interpretability",
+      "mechanistic interpretability",
+      "sparse autoencoder",
+      "ai safety",
+      "red teaming",
+      "jailbreak",
+      "circuits"
+     ]
+    },
+    {
+     "id": "llm-overview",
+     "title": "LLM overviews and intros",
+     "shelf": "semi",
+     "level": "beginner",
+     "keywords": [
+      "intro to large language models",
+      "how chatgpt works",
+      "large language models explained",
+      "what is an llm",
+      "llm explained",
+      "llm course",
+      "generative ai explained"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aieng",
+   "title": "AI Engineering",
+   "blurb": "Building products on top of models",
+   "nodes": [
+    {
+     "id": "ae-roadmap",
+     "title": "AI engineer roadmaps and overviews",
+     "shelf": "fast",
+     "level": "beginner",
+     "keywords": [
+      "ai engineer roadmap",
+      "ai engineering",
+      "ai engineer",
+      "become an ai engineer",
+      "llm engineer",
+      "generative ai course",
+      "genai course",
+      "ai engineering course"
+     ]
+    },
+    {
+     "id": "ae-prompting",
+     "title": "Prompt engineering",
+     "shelf": "fast",
+     "level": "beginner",
+     "keywords": [
+      "prompt engineering",
+      "prompting techniques",
+      "few-shot",
+      "system prompt",
+      "prompt design",
+      "structured output",
+      "json mode",
+      "function calling"
+     ]
+    },
+    {
+     "id": "ae-apis",
+     "title": "LLM APIs and SDKs",
+     "shelf": "fast",
+     "level": "beginner",
+     "keywords": [
+      "openai api",
+      "anthropic api",
+      "claude api",
+      "gemini api",
+      "llm api",
+      "langchain",
+      "llamaindex",
+      "ai sdk",
+      "litellm",
+      "openrouter",
+      "streaming responses"
+     ]
+    },
+    {
+     "id": "ae-vector",
+     "title": "Embeddings, vector search, vector DBs",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "vector database",
+      "vector search",
+      "pinecone",
+      "qdrant",
+      "chroma",
+      "pgvector",
+      "faiss",
+      "weaviate",
+      "hnsw",
+      "semantic search",
+      "hybrid search",
+      "bm25",
+      "reranking",
+      "reranker"
+     ]
+    },
+    {
+     "id": "ae-rag",
+     "title": "RAG",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "rag",
+      "retrieval augmented",
+      "retrieval-augmented",
+      "chunking strategies",
+      "document parsing",
+      "rag pipeline",
+      "graph rag",
+      "graphrag",
+      "rag from scratch",
+      "advanced rag",
+      "pdf rag"
+     ]
+    },
+    {
+     "id": "ae-agents",
+     "title": "Agents and tool use",
+     "shelf": "fast",
+     "level": "intermediate",
+     "keywords": [
+      "ai agent",
+      "agents",
+      "agentic",
+      "multi-agent",
+      "langgraph",
+      "crewai",
+      "autogen",
+      "agent loop",
+      "tool use",
+      "function calling agent",
+      "react agent",
+      "openai agents",
+      "claude agent",
+      "agent sdk"
+     ]
+    },
+    {
+     "id": "ae-mcp",
+     "title": "MCP and agent protocols",
+     "shelf": "fast",
+     "level": "intermediate",
+     "keywords": [
+      "mcp",
+      "model context protocol",
+      "a2a",
+      "agent protocol",
+      "mcp server"
+     ]
+    },
+    {
+     "id": "ae-context",
+     "title": "Context engineering and memory",
+     "shelf": "fast",
+     "level": "intermediate",
+     "keywords": [
+      "context engineering",
+      "long context",
+      "agent memory",
+      "context window",
+      "prompt caching",
+      "compaction",
+      "memory for agents"
+     ]
+    },
+    {
+     "id": "ae-evals",
+     "title": "Evals and testing LLM apps",
+     "shelf": "fast",
+     "level": "intermediate",
+     "keywords": [
+      "evals",
+      "llm evaluation",
+      "llm as a judge",
+      "evaluation harness",
+      "ragas",
+      "benchmarks",
+      "testing llm",
+      "eval driven"
+     ]
+    },
+    {
+     "id": "ae-finetune",
+     "title": "Fine-tuning",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "fine-tuning",
+      "finetuning",
+      "fine tuning",
+      "lora",
+      "qlora",
+      "peft",
+      "unsloth",
+      "axolotl",
+      "trl",
+      "parameter efficient",
+      "fine-tune llama"
+     ]
+    },
+    {
+     "id": "ae-codegen",
+     "title": "AI coding tools and vibe coding",
+     "shelf": "fast",
+     "level": "beginner",
+     "keywords": [
+      "claude code",
+      "cursor",
+      "copilot",
+      "vibe coding",
+      "ai coding",
+      "codex",
+      "windsurf",
+      "coding agent",
+      "agentic coding",
+      "ai pair programming"
+     ]
+    },
+    {
+     "id": "ae-local",
+     "title": "Open models and local LLMs",
+     "shelf": "fast",
+     "level": "beginner",
+     "keywords": [
+      "ollama",
+      "llama.cpp",
+      "local llm",
+      "run llm locally",
+      "lm studio",
+      "hugging face",
+      "open source llm",
+      "vllm local"
+     ]
+    },
+    {
+     "id": "ae-llmops",
+     "title": "LLMOps, observability, cost",
+     "shelf": "fast",
+     "level": "advanced",
+     "keywords": [
+      "llmops",
+      "observability",
+      "langsmith",
+      "langfuse",
+      "llm monitoring",
+      "cost optimization",
+      "latency",
+      "guardrails",
+      "llm security",
+      "prompt injection",
+      "caching"
+     ]
+    },
+    {
+     "id": "ae-multimodal",
+     "title": "Multimodal and voice apps",
+     "shelf": "fast",
+     "level": "intermediate",
+     "keywords": [
+      "voice agent",
+      "realtime api",
+      "vision api",
+      "multimodal app",
+      "computer use",
+      "document ai",
+      "ocr",
+      "browser agent"
+     ]
+    },
+    {
+     "id": "ae-projects",
+     "title": "AI engineering projects",
+     "shelf": "fast",
+     "level": "beginner",
+     "keywords": [
+      "ai project",
+      "build an ai app",
+      "llm project",
+      "build a chatbot",
+      "ai app tutorial",
+      "full stack ai",
+      "saas with ai",
+      "ai startup"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "infra",
+   "title": "MLOps and Infrastructure",
+   "blurb": "Serving, GPUs, distributed training and deployment",
+   "nodes": [
+    {
+     "id": "mlops-core",
+     "title": "MLOps fundamentals",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "mlops",
+      "ml pipeline",
+      "ci/cd for ml",
+      "experiment tracking",
+      "mlflow",
+      "weights and biases",
+      "dvc",
+      "feature store",
+      "model registry",
+      "kubeflow",
+      "airflow",
+      "data pipeline"
+     ]
+    },
+    {
+     "id": "infra-containers",
+     "title": "Docker, Kubernetes, cloud",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "kubernetes",
+      "docker for ml",
+      "aws sagemaker",
+      "gcp vertex",
+      "azure ml",
+      "terraform",
+      "cloud for ml",
+      "serverless",
+      "modal"
+     ]
+    },
+    {
+     "id": "infra-serving",
+     "title": "Model serving and inference engineering",
+     "shelf": "fast",
+     "level": "advanced",
+     "keywords": [
+      "vllm",
+      "tgi",
+      "triton inference",
+      "tensorrt",
+      "model serving",
+      "inference engine",
+      "sglang",
+      "llm serving",
+      "batching",
+      "onnx",
+      "inference engineering"
+     ]
+    },
+    {
+     "id": "infra-gpu",
+     "title": "GPUs and CUDA",
+     "shelf": "evergreen",
+     "level": "advanced",
+     "keywords": [
+      "cuda",
+      "gpu programming",
+      "triton kernel",
+      "gpu architecture",
+      "tensor cores",
+      "nccl",
+      "cuda programming",
+      "parallel programming",
+      "kernel"
+     ]
+    },
+    {
+     "id": "infra-distributed",
+     "title": "Distributed training",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "distributed training",
+      "fsdp",
+      "deepspeed",
+      "data parallel",
+      "tensor parallel",
+      "pipeline parallel",
+      "megatron",
+      "zero optimizer",
+      "multi-gpu"
+     ]
+    },
+    {
+     "id": "infra-data",
+     "title": "Data engineering for ML",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "data engineering",
+      "spark",
+      "kafka",
+      "dbt",
+      "data lake",
+      "etl",
+      "data warehouse",
+      "dataset curation",
+      "web scraping"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sysdesign",
+   "title": "System Design",
+   "blurb": "Distributed systems and designing ML/AI systems",
+   "nodes": [
+    {
+     "id": "sd-fundamentals",
+     "title": "System design fundamentals",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "system design",
+      "system design interview",
+      "system design basics",
+      "scalability",
+      "load balancer",
+      "cap theorem",
+      "consistent hashing",
+      "api design",
+      "rate limiter"
+     ]
+    },
+    {
+     "id": "sd-data",
+     "title": "Databases, caching, queues",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "database internals",
+      "caching",
+      "redis",
+      "message queue",
+      "kafka internals",
+      "sharding",
+      "replication",
+      "consistency",
+      "b-tree",
+      "lsm",
+      "indexing",
+      "transactions"
+     ]
+    },
+    {
+     "id": "sd-distributed",
+     "title": "Distributed systems",
+     "shelf": "evergreen",
+     "level": "advanced",
+     "keywords": [
+      "distributed systems",
+      "raft",
+      "paxos",
+      "consensus",
+      "mit 6.824",
+      "designing data-intensive",
+      "fault tolerance",
+      "distributed database"
+     ]
+    },
+    {
+     "id": "sd-cases",
+     "title": "Design case studies",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "design twitter",
+      "design youtube",
+      "design uber",
+      "design url shortener",
+      "design whatsapp",
+      "design netflix",
+      "design a payment",
+      "design instagram",
+      "tinyurl",
+      "design dropbox"
+     ]
+    },
+    {
+     "id": "sd-ml",
+     "title": "ML system design",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "ml system design",
+      "machine learning system design",
+      "design a recommendation",
+      "design a search ranking",
+      "ml design interview",
+      "fraud detection system",
+      "ads ranking"
+     ]
+    },
+    {
+     "id": "sd-llm",
+     "title": "LLM and AI system design",
+     "shelf": "fast",
+     "level": "advanced",
+     "keywords": [
+      "design a rag system",
+      "design chatgpt",
+      "design an agent",
+      "llm system design",
+      "ai system design",
+      "design a chatbot",
+      "genai system design"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "papers",
+   "title": "Papers, Talks and Research",
+   "blurb": "Paper walkthroughs, conference talks and deep interviews",
+   "nodes": [
+    {
+     "id": "pp-explainers",
+     "title": "Paper explainers",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "paper explained",
+      "paper walkthrough",
+      "paper reading",
+      "research paper",
+      "arxiv",
+      "paper review",
+      "reading group",
+      "yannic kilcher"
+     ]
+    },
+    {
+     "id": "pp-howto",
+     "title": "How to read papers and do research",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "how to read a paper",
+      "how to do research",
+      "research tips",
+      "phd advice",
+      "reproduce paper",
+      "ml research",
+      "research engineer"
+     ]
+    },
+    {
+     "id": "pp-talks",
+     "title": "Conference talks and lecture series",
+     "shelf": "semi",
+     "level": "advanced",
+     "keywords": [
+      "neurips",
+      "icml",
+      "iclr",
+      "cvpr",
+      "pycon",
+      "pydata",
+      "scipy conference",
+      "kubecon",
+      "strange loop",
+      "cppcon",
+      "ai engineer summit",
+      "ai engineer world",
+      "stanford cs",
+      "mit 6.",
+      "cs224n",
+      "cs231n",
+      "cs336",
+      "cs25",
+      "cs229",
+      "ai startup school"
+     ]
+    },
+    {
+     "id": "pp-interviews",
+     "title": "Long-form interviews and podcasts",
+     "shelf": "fast",
+     "level": "beginner",
+     "keywords": [
+      "interview with",
+      "podcast",
+      "fireside",
+      "conversation with",
+      "dwarkesh",
+      "lex fridman",
+      "latent space",
+      "no priors"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "career",
+   "title": "Job Prep and Career",
+   "blurb": "Interviews, portfolios and career planning for AI/ML engineers",
+   "nodes": [
+    {
+     "id": "cr-roadmap",
+     "title": "Career roadmaps",
+     "shelf": "semi",
+     "level": "beginner",
+     "keywords": [
+      "ml engineer roadmap",
+      "ai engineer roadmap",
+      "data scientist roadmap",
+      "how to become",
+      "career in ai",
+      "ai career",
+      "ml career",
+      "learn ai in",
+      "roadmap 2"
+     ]
+    },
+    {
+     "id": "cr-coding",
+     "title": "Coding interview strategy",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "coding interview",
+      "how to solve leetcode",
+      "interview preparation",
+      "technical interview",
+      "mock interview",
+      "faang interview",
+      "interview tips",
+      "big tech interview"
+     ]
+    },
+    {
+     "id": "cr-ml-interview",
+     "title": "ML and DS interview questions",
+     "shelf": "evergreen",
+     "level": "intermediate",
+     "keywords": [
+      "machine learning interview",
+      "ml interview",
+      "data science interview",
+      "interview questions machine learning",
+      "ml theory interview",
+      "deep learning interview",
+      "statistics interview"
+     ]
+    },
+    {
+     "id": "cr-ai-interview",
+     "title": "AI/LLM engineer interviews",
+     "shelf": "fast",
+     "level": "intermediate",
+     "keywords": [
+      "ai engineer interview",
+      "llm interview",
+      "genai interview",
+      "rag interview",
+      "agent interview",
+      "prompt engineer interview",
+      "applied ai interview"
+     ]
+    },
+    {
+     "id": "cr-fde",
+     "title": "Forward-deployed and solutions roles",
+     "shelf": "fast",
+     "level": "intermediate",
+     "keywords": [
+      "forward deployed",
+      "forward-deployed",
+      "solutions engineer",
+      "solutions architect",
+      "customer engineer",
+      "applied ai engineer"
+     ]
+    },
+    {
+     "id": "cr-behavioral",
+     "title": "Behavioral and soft skills",
+     "shelf": "evergreen",
+     "level": "beginner",
+     "keywords": [
+      "behavioral interview",
+      "star method",
+      "tell me about yourself",
+      "negotiation",
+      "salary negotiation",
+      "communication skills",
+      "leadership principles"
+     ]
+    },
+    {
+     "id": "cr-portfolio",
+     "title": "Resume, portfolio and projects",
+     "shelf": "semi",
+     "level": "beginner",
+     "keywords": [
+      "resume",
+      "portfolio",
+      "github profile",
+      "projects for resume",
+      "ml projects",
+      "ai projects for resume",
+      "linkedin",
+      "cold email",
+      "networking",
+      "open source contribution"
+     ]
+    },
+    {
+     "id": "cr-kaggle",
+     "title": "Kaggle and competitions",
+     "shelf": "semi",
+     "level": "intermediate",
+     "keywords": [
+      "kaggle",
+      "competition",
+      "hackathon",
+      "grandmaster",
+      "kaggle solution"
+     ]
+    },
+    {
+     "id": "cr-freelance",
+     "title": "Freelancing and building in public",
+     "shelf": "semi",
+     "level": "beginner",
+     "keywords": [
+      "freelance",
+      "indie hacker",
+      "build in public",
+      "side project",
+      "product engineer",
+      "product management for ai",
+      "ai product"
+     ]
+    }
+   ]
+  }
+ ]
+}
