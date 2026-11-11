@@ -167,7 +167,7 @@ section[aria-labelledby="fy"] .page-head h1 { font-size: 28px; }
 .chip:hover { background: var(--wash); }
 .chip.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .sortsel { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--moss); }
-.sortsel select { border: 1px solid var(--line); background: var(--page); border-radius: 8px; padding: 5px 8px; }
+
 .more { display: block; margin: 22px auto 0; border: 1px solid var(--line); background: var(--page); border-radius: 10px; padding: 10px 22px; font-weight: 550; }
 .empty { padding: 60px 0; max-width: 52ch; }
 .empty h2 { font-size: 24px; }
@@ -294,7 +294,7 @@ section[aria-labelledby="fy"] .page-head h1 { font-size: 28px; }
 .chipbar { position: sticky; top: var(--top); z-index: 20; margin: 0 calc(var(--gutter) * -1); padding: 12px var(--gutter); background: var(--chalk); display: flex; align-items: center; }
 .chip-scroll { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; flex: 1; scroll-behavior: smooth; }
 .chip-scroll::-webkit-scrollbar { display: none; }
-.fchip { flex: none; border: 0; border-radius: 9px; padding: 0 14px; height: 34px; background: var(--wash); color: var(--ink); font: 550 14px var(--font-ui); cursor: pointer; white-space: nowrap; }
+.fchip { flex: none; border: 0; border-radius: 99px; padding: 0 14px; height: 34px; background: var(--wash); color: var(--ink); font: 550 14px var(--font-ui); cursor: pointer; white-space: nowrap; }
 .fchip:hover { background: color-mix(in srgb, var(--ink) 13%, transparent); }
 .fchip.on { background: var(--accent); color: var(--accent-ink); }
 .chip-arrow { position: absolute; top: 12px; z-index: 2; width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--chalk); color: var(--ink); display: grid; place-items: center; cursor: pointer; box-shadow: 0 0 14px 12px var(--chalk); }
@@ -454,3 +454,16 @@ section[aria-labelledby="fy"] .page-head h1 { font-size: 28px; }
 .shell.mini .nav .lg { display: none; }
 .shell.mini .nav .sh { display: block; }
 @media (max-width: 860px) { .shell.mini .nav .lg { display: block; } .shell.mini .nav .sh { display: none; } }
+
+/* pill dropdown */
+.pill-wrap { position: relative; }
+.pill-btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--page); color: var(--ink); border-radius: 99px; padding: 6px 12px 6px 16px; font-size: 14px; cursor: pointer; transition: background .15s, border-color .15s, transform .1s; }
+.pill-btn:hover { background: var(--wash); }
+.pill-btn[aria-expanded="true"] { border-color: var(--focus); }
+.pill-btn svg { transition: transform .2s var(--ease); }
+.pill-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.pill-list { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; min-width: 100%; width: max-content; padding: 6px; border-radius: 18px; background: var(--page); border: 1px solid var(--line); box-shadow: 0 8px 28px rgb(0 0 0 / .22); transform-origin: top right; animation: pop .14s var(--ease); }
+.pill-list button { display: block; width: 100%; text-align: left; border: 0; background: none; color: var(--ink); padding: 8px 16px; border-radius: 99px; font-size: 14.5px; cursor: pointer; white-space: nowrap; }
+.pill-list button:hover, .pill-list button:focus-visible { background: var(--wash); outline: none; }
+.pill-list button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.chip, .btn { border-radius: 99px; }

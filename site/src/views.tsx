@@ -36,6 +36,47 @@ function PageHead({ title, sub, children }: { title: string; sub?: string; child
   );
 }
 
+/* ---------- pill dropdown (rounded, replaces the native select popup) ---------- */
+function PillSelect({ label, value, options, onChange }: { label: string; value: string; options: [string, string][]; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const down = (e: MouseEvent) => { if (box.current && !box.current.contains(e.target as Node)) setOpen(false); };
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setOpen(false); box.current?.querySelector<HTMLElement>(".pill-btn")?.focus(); }
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const items = Array.from(box.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? []);
+        const i = items.indexOf(document.activeElement as HTMLElement);
+        items[(i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length]?.focus();
+      }
+    };
+    document.addEventListener("mousedown", down); document.addEventListener("keydown", key);
+    box.current?.querySelector<HTMLElement>('[aria-selected="true"]')?.focus();
+    return () => { document.removeEventListener("mousedown", down); document.removeEventListener("keydown", key); };
+  }, [open]);
+  const cur = options.find((o) => o[0] === value)?.[1] ?? options[0][1];
+  return (
+    <div className="sortsel" ref={box}>
+      <span>{label}</span>
+      <div className="pill-wrap">
+        <button type="button" className="pill-btn" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+          {cur}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+        </button>
+        {open ? (
+          <div className="pill-list" role="listbox" aria-label={label}>
+            {options.map(([v, l]) => (
+              <button key={v} type="button" role="option" aria-selected={v === value} className={v === value ? "on" : ""} onClick={() => { setOpen(false); onChange(v); }}>{l}</button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 /* ============================== Catalog (filterable list) ============================== */
 export function Catalog({ base, q, data, showNode = true, emptyTitle = "No videos match", sortDefault = "best" }:
   { base: Video[]; q: URLSearchParams; data: Data; showNode?: boolean; emptyTitle?: string; sortDefault?: string }) {
@@ -76,14 +117,7 @@ export function Catalog({ base, q, data, showNode = true, emptyTitle = "No video
         <span className="fgroup">
           <button type="button" className={"chip" + (q.get("fresh") === "1" ? " on" : "")} aria-pressed={q.get("fresh") === "1"} onClick={() => setParam("fresh", q.get("fresh") === "1" ? null : "1")}>Hide possibly outdated</button>
         </span>
-        <label className="sortsel">Sort
-          <select value={sort} onChange={(e) => setParam("sort", e.target.value === sortDefault ? null : e.target.value)}>
-            {sortDefault === "saved" ? <option value="saved">Saved order</option> : null}
-            <option value="best">Most recommended</option>
-            <option value="path">Learning order</option>
-            <option value="recent">Recently recommended</option>
-          </select>
-        </label>
+        <PillSelect label="Sort" value={sort} options={[...(sortDefault === "saved" ? [["saved", "Saved order"]] : []), ["best", "Most recommended"], ["path", "Learning order"], ["recent", "Recently recommended"]] as [string, string][]} onChange={(v) => setParam("sort", v === sortDefault ? null : v)} />
       </div>
       {list.length === 0 ? (
         <Empty title={emptyTitle}>Clear a filter or try a broader search.</Empty>
