@@ -95,11 +95,6 @@ function Slide(p: SlideProps) {
         {active && paused ? <span className="sc-pause" aria-hidden="true"><Ic n="play" /></span> : null}
         {active && !p.sound ? <button className="sc-unmute" onClick={p.onSound}><Ic n="mute" />Tap for sound</button> : null}
       </div>
-      <div className="sc-info">
-          <span className="sc-trk">{p.track}</span>
-          <h2>{clean(s.t)}</h2>
-          <p><b>{s.c}</b><span>{compact(s.v)} views</span><span>{age(s.p)}</span></p>
-      </div>
       </div>
       <div className="sc-acts">
         <button className={"sc-act" + (p.saved ? " on" : "")} onClick={p.onSave} aria-pressed={p.saved} title="Save (s)"><Ic n="save" /><span>{p.saved ? "Saved" : "Save"}</span></button>

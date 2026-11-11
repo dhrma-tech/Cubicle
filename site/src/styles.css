@@ -771,7 +771,7 @@ main:has(> .ai) { padding: 0; animation: none; overflow: hidden; }
 
 /* title block sits under the video, so it never covers the video's own captions */
 .sc-slide { container-type: size; align-items: center; padding: 0; gap: 18px; }
-.sc-col { --sh: min(calc(100cqh - 124px), 860px); display: flex; flex-direction: column; gap: 12px; width: calc(var(--sh) * 9 / 16); max-width: 100cqw; flex: none; }
+.sc-col { --sh: min(calc(100cqh - 24px), 860px); display: flex; flex-direction: column; gap: 12px; width: calc(var(--sh) * 9 / 16); max-width: 100cqw; flex: none; }
 .sc-stage { height: var(--sh); width: 100%; max-height: none; aspect-ratio: auto; }
 .sc-info { position: static; padding: 0 4px; color: var(--ink); background: none; pointer-events: auto; min-height: 84px; }
 .sc-info h2 { font: 600 16px/1.35 var(--font-ui); margin: 8px 0 4px; -webkit-line-clamp: 2; color: var(--ink); }
@@ -798,7 +798,7 @@ main:has(> .ai) { padding: 0; animation: none; overflow: hidden; }
 
 @media (max-width: 1000px) {
   .sc, .sc.fold { grid-template-columns: minmax(0, 1fr); }
-  .sc-col { --sh: calc(100cqh - 124px); width: 100cqw; gap: 10px; }
+  .sc-col { --sh: calc(100cqh); width: 100cqw; gap: 10px; }
   .sc-stage { border-radius: 0; }
   .sc-info { padding: 0 82px 0 14px; }
   .sc-acts { right: 8px; bottom: 128px; padding-bottom: 0; align-self: auto; }
