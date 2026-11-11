@@ -21,11 +21,12 @@ export interface Study {
   budget: number; // minutes available today
   review: Record<string, Review>;
   follows: { channels: string[]; topics: string[]; seen: number };
+  todayOff: string; // day the Today card was dismissed
 }
 
 const fresh = (): Study => ({
   notes: {}, resume: {}, speed: 1, queue: [], autoNext: true, focus: false, log: {}, plan: null, budget: 30, review: {},
-  follows: { channels: [], topics: [], seen: Date.now() },
+  follows: { channels: [], topics: [], seen: Date.now() }, todayOff: "",
 });
 
 function load(): Study {
@@ -127,6 +128,9 @@ export const study = {
     commit({ ...state, follows: { ...f, topics: f.topics.includes(n) ? f.topics.filter((x) => x !== n) : [...f.topics, n] } });
   },
   markSeen: () => commit({ ...state, follows: { ...state.follows, seen: Date.now() } }),
+  dismissToday: () => commit({ ...state, todayOff: dayKey() }),
+  showToday: () => commit({ ...state, todayOff: "" }),
+  clearResume: (vid: string) => { const resume = { ...state.resume }; delete resume[vid]; commit({ ...state, resume }); },
   /* backup */
   exportJSON: () => JSON.stringify(state),
   importJSON: (txt: string) => { const j = JSON.parse(txt); const f = fresh(); commit({ ...f, ...j, follows: { ...f.follows, ...(j.follows || {}) } }); },

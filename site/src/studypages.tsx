@@ -177,9 +177,12 @@ export function TodayCard({ data }: { data: Data }) {
   }, [s.plan, s.queue, data, st.done]);
   const picks = fit(pool, s.budget);
   const resume = st.history.map((h) => data.byId.get(h.id)).find((v) => v && s.resume[v.i] && !st.done[v.i]);
+  if (s.todayOff === dayKey()) return null;
+  const closeBtn = <button type="button" className="today-x" onClick={() => { study.dismissToday(); toast("Today card hidden until tomorrow", () => study.showToday()); }} aria-label="Hide the Today card for today" title="Hide for today"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>;
   if (!pool.length && !due && !week && !resume) {
     return (
       <aside className="today" aria-label="Today">
+        {closeBtn}
         <div><h2>Today</h2><p>Set a goal and Cubicle will line up what to watch for the time you have.</p></div>
         <a className="btn btn-primary" href="#/plan">Build a study plan</a>
       </aside>
@@ -187,6 +190,7 @@ export function TodayCard({ data }: { data: Data }) {
   }
   return (
     <aside className="today" aria-label="Today">
+      {closeBtn}
       <div className="today-h">
         <h2>Today</h2>
         <span className="today-stats">{fmtHM(today)} studied today · {fmtHM(week)} this week{streakOf(sc.met) ? ` · ${streakOf(sc.met)} day Shorts streak` : ""}</span>
@@ -195,7 +199,12 @@ export function TodayCard({ data }: { data: Data }) {
         </span>
       </div>
       <div className="today-b">
-        {resume ? <a className="today-resume" href={`#/watch/${resume.i}`}>Resume: <b>{resume.t}</b> <small>from {fmtHM(s.resume[resume.i])}</small></a> : null}
+        {resume ? (
+          <div className="today-resume">
+            <a href={`#/watch/${resume.i}`}>Resume: <b>{resume.t}</b> <small>from {fmtHM(s.resume[resume.i])}</small></a>
+            <button type="button" className="today-x sm" onClick={() => { study.clearResume(resume.i); toast("Resume point cleared"); }} aria-label="Clear this resume point" title="Clear resume point"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+          </div>
+        ) : null}
         {picks.length ? (
           <>
             <ol className="mrow-list tight">{picks.slice(0, 4).map((v) => <MiniRow key={v.i} v={v} />)}</ol>

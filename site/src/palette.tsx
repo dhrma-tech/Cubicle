@@ -34,6 +34,7 @@ export function Palette({ data, onClose }: { data: Data; onClose: () => void }) 
       act("Switch theme: light", () => actions.setSettings({ theme: "light" })),
       act("Switch theme: dark", () => actions.setSettings({ theme: "dark" })),
       act("Switch theme: match system", () => actions.setSettings({ theme: "auto" })),
+      act("Show Today card on Home", () => { study.showToday(); go("/"); }),
       act("Open Ask AI", () => openAI()),
       act("Clear Up next queue", () => { study.setQueue([]); toast("Queue cleared"); }),
     ];
