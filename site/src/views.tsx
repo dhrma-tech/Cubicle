@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Video } from "./types";
 import { actions, useStore } from "./store";
 import { study, useStudy } from "./study";
+import { SyncPanel } from "./sync";
 import { fmtDur, LEVEL_NAME, pathOrder, SHELF_NAME, type Data } from "./data";
 import { Actions, Empty, freshText, go, LevelTag, Thumb, Vouch, VideoRow, YtCard } from "./components";
 
@@ -443,12 +444,12 @@ export function SettingsPage() {
   const [msg, setMsg] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const download = () => {
-    const blob = new Blob([actions.exportJSON()], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ ...JSON.parse(actions.exportJSON()), _study: JSON.parse(study.exportJSON()) }, null, 1)], { type: "application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "devtube-progress.json"; a.click(); URL.revokeObjectURL(a.href);
   };
   const upload = async (f?: File) => {
     if (!f) return;
-    try { actions.importJSON(await f.text()); setMsg("Progress restored."); } catch (e) { setMsg("That file is not a DEV Tube backup. Choose the file you exported."); }
+    try { const j = JSON.parse(await f.text()); const st = j._study; delete j._study; actions.importJSON(JSON.stringify(j)); if (st) study.importJSON(JSON.stringify(st)); setMsg("Progress restored."); } catch (e) { setMsg("That file is not a DEV Tube backup. Choose the file you exported."); }
   };
   return (
     <div className="page narrow">
@@ -474,13 +475,14 @@ export function SettingsPage() {
           <label key={t}><input type="radio" name="theme" checked={s.settings.theme === t} onChange={() => actions.setSettings({ theme: t })} /> {t === "auto" ? "Match my device" : t === "light" ? "Light" : "Dark"}</label>
         ))}
       </fieldset>
+      <SyncPanel />
       <fieldset className="set">
         <legend>Your data</legend>
         <p>{s.liked.length} liked, {s.later.length} in watch later, {Object.keys(s.done).length} done, {s.history.length} in history.</p>
         <div className="btnrow">
           <button className="btn" type="button" onClick={download}>Export progress</button>
           <button className="btn" type="button" onClick={() => fileRef.current?.click()}>Import progress</button>
-          <button className="btn btn-danger" type="button" onClick={() => { if (confirm("Erase all likes, history and progress from this browser?")) { actions.reset(); setMsg("All local data erased."); } }}>Erase everything</button>
+          <button className="btn btn-danger" type="button" onClick={() => { if (confirm("Erase all likes, history and progress from this browser?")) { actions.reset(); study.reset(); setMsg("All local data erased."); } }}>Erase everything</button>
           <input ref={fileRef} type="file" accept="application/json" hidden onChange={(e) => upload(e.target.files?.[0])} />
         </div>
         <p role="status" className="msg">{msg}</p>

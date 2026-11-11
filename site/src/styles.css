@@ -1003,3 +1003,5 @@ button.nav { background: none; border: 0; width: 100%; font: inherit; color: inh
 .pal-i span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pal-i small{color:var(--moss);white-space:nowrap;flex:none}
 .pal-i.on{background:var(--wash)}
+.sync-pass{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--moss);margin:8px 0}
+.sync-pass input{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--page);color:var(--ink);font:inherit;max-width:320px}

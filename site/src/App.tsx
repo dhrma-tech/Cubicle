@@ -128,6 +128,17 @@ export default function App() {
     return () => removeEventListener("keydown", onKey);
   }, [rows, select]);
 
+  // PWA share target: ?url=...&text=... opens Ask AI with the shared link
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    const shared = [sp.get("url"), sp.get("text"), sp.get("title")].filter(Boolean).join(" ").trim();
+    if (!shared) return;
+    history.replaceState(null, "", location.pathname + "#/");
+    const yt = /(?:https?:\/\/)?(?:[\w.]*\.)?(?:youtu\.be|youtube\.com)\/\S+/.exec(shared);
+    openAI(yt
+      ? `Add this video to my DEV Tube: ${yt[0]}. Use fetch_youtube, tell me if it is already in the catalogue, and if not call propose_video with the best topic and level.`
+      : `I shared this with DEV Tube: ${shared.slice(0, 500)}`);
+  }, []);
   const aiOpen = useAIOpen();
   useEffect(() => { if (route.path[0] === "ai") { openAI(route.q.get("ask") ?? undefined); history.replaceState(null, "", "#/"); dispatchEvent(new HashChangeEvent("hashchange")); } }, [route]);   // old #/ai links
   const [p0, p1] = route.path;

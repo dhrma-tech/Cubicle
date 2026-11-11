@@ -20,6 +20,39 @@ Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). DEV Tube nar
 - Switch between light and dark themes, and pick a mid-video or uploader thumbnail
 - Export your progress as a file, or download the full dataset and build your own version
 
+## Study Tools
+
+Everything below is local to the browser (key `devtube.study.v1`) unless you turn on sync.
+
+| Feature | Where |
+| --- | --- |
+| Today card, time budget chips (15, 30, 60 min), study plan from a track or section, or built by Ask AI (`save_plan`) | Home, `#/plan` |
+| Timestamped notes (press `n` to stamp), click to seek, Markdown export | Watch page |
+| Resume position, remembered playback speed, Up next queue with auto-next and "fit to N minutes" | Watch page, `#/queue` |
+| Spaced review at 3, 7, 30, 90 days for Done videos and Shorts "Got it", with "Quiz me with AI" | `#/review` |
+| Focus mode and a 25/5 Pomodoro timer. Study time is counted only while a video plays | Watch page |
+| Skill map (syllabus coverage and gaps) and weekly report | `#/skills` |
+| Follow channels and topics, "New for you" feed | `#/following` |
+| Command palette (Ctrl or Cmd + K) | Everywhere |
+| Installable app and share target: share a YouTube link to DEV Tube and Ask AI proposes it | Browser install prompt |
+
+### Optional cross-device sync
+
+Sync stores one AES-GCM encrypted blob per passphrase. The key and the row id are derived in the browser (PBKDF2, 250k rounds), so the server never sees the passphrase or readable data. Without the two env vars below, Settings shows "Sync is not enabled on this site".
+
+1. Create a free Supabase project and run:
+
+```sql
+create table sync_blobs (
+  id text primary key,
+  data text not null,
+  updated_at timestamptz not null default now()
+);
+alter table sync_blobs enable row level security; -- no policies: only the service key can read or write
+```
+
+2. In Vercel, add `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` (the service role key, never commit it), then redeploy.
+
 ## Who This README Is For
 
 Anyone. You do not need to be a developer to run it. If you only want to **watch**, open the live site (add the link here once deployed). If you want to **run or rebuild it**, the steps below are written for beginners.

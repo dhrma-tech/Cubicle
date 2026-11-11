@@ -1,7 +1,16 @@
 {
   "functions": {
-    "api/chat.js": { "maxDuration": 60 },
-    "api/news.js": { "maxDuration": 30 },
-    "api/video.js": { "maxDuration": 20 }
+    "api/chat.js": {
+      "maxDuration": 60
+    },
+    "api/news.js": {
+      "maxDuration": 30
+    },
+    "api/video.js": {
+      "maxDuration": 20
+    },
+    "api/sync.js": {
+      "maxDuration": 20
+    }
   }
 }
