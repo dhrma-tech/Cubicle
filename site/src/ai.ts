@@ -66,7 +66,7 @@ async function callGemini(body: Record<string, unknown>) {
   const key = geminiKey();
   let r: Response;
   try {
-    r = await fetch(key ? (key.startsWith("AQ.") ? `https://aiplatform.googleapis.com/v1/publishers/google/models/${MODEL}:generateContent` : `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`) : "/api/chat", {
+    r = await fetch(key ? `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent` : "/api/chat", {
       method: "POST", headers: { "content-type": "application/json", ...(key ? { "x-goog-api-key": key } : {}) },
       body: JSON.stringify(key ? { ...body, toolConfig: { functionCallingConfig: { mode: "AUTO" } } } : body),
       signal: AbortSignal.timeout(58_000),
