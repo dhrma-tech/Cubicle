@@ -12,7 +12,7 @@ export type Item =
   | { kind: "user"; text: string }
   | { kind: "text"; text: string }
   | { kind: "ask"; questions: Question[]; answered?: Answer[] }
-  | { kind: "playlist"; title: string; desc: string; ids: string[]; notes: Record<string, string>; saved?: string }
+  | { kind: "playlist"; title: string; desc: string; ids: string[]; notes: Record<string, string>; saved?: string; plan?: number; planSaved?: boolean }
   | { kind: "video"; id: string; title: string; channel: string; handle: string | null; node: string; level: Level; note: string; seconds?: number; published?: string; state?: "added" | "skipped" }
   | { kind: "error"; text: string; key?: boolean; retry?: boolean };
 
@@ -38,6 +38,8 @@ const DECLS = [
     parameters: { type: "OBJECT", properties: { questions: { type: "ARRAY", items: { type: "OBJECT", properties: { question: str("STRING"), options: { type: "ARRAY", items: str("STRING") }, multi: str("BOOLEAN", "Allow several answers") }, required: ["question", "options"] } } }, required: ["questions"] } },
   { name: "show_playlist", description: "Show an ordered playlist to the user with a Save button. Only use video ids returned by search_catalogue or already in the catalogue.",
     parameters: { type: "OBJECT", properties: { title: str("STRING"), description: str("STRING", "One sentence on who it is for and how long it takes"), ids: { type: "ARRAY", items: str("STRING") }, notes: { type: "ARRAY", items: str("STRING"), description: "One short reason per video, same order as ids" } }, required: ["title", "ids"] } },
+  { name: "save_plan", description: "Offer the user a day-by-day study plan built from catalogue videos. They confirm with a Use this plan button, then it appears on their Home page as Today. Use it when they ask for a study plan or schedule.",
+    parameters: { type: "OBJECT", properties: { goal: str("STRING", "Short plan name, e.g. LLM engineer in 8 weeks"), minutes_per_day: str("INTEGER", "Study minutes per day"), ids: { type: "ARRAY", items: str("STRING"), description: "Video ids in watch order" }, notes: { type: "ARRAY", items: str("STRING") } }, required: ["goal", "ids", "minutes_per_day"] } },
   { name: "fetch_youtube", description: "Read a YouTube link the user pasted: title, channel, length, and whether it is already in the catalogue.", parameters: { type: "OBJECT", properties: { url: str("STRING") }, required: ["url"] } },
   { name: "propose_video", description: "Offer to add a YouTube video (from fetch_youtube) to the user's own DEV Tube. Only they will see it. They confirm with a button.",
     parameters: { type: "OBJECT", properties: { id: str("STRING"), node: str("STRING", "Best matching topic node id"), level: { type: "STRING", enum: ["b", "i", "a"] }, note: str("STRING", "One sentence on why it fits that topic") }, required: ["id", "node", "level"] } },
@@ -52,6 +54,7 @@ Rules
 - Be curious before you build. For any broad or vague request, call ask_user first with 2 to 4 questions: goal or target role, current level, hours per week, preferred video length, deadline, and what they already know. Offer 2 to 5 short options per question. Skip anything they already told you. Ask a follow-up if the answers are thin.
 - To build a playlist: run several search_catalogue calls (different nodes or keywords), order by prerequisites from beginner to advanced, fit the user's time budget, then call show_playlist with 4 to 15 videos and a one-line reason for each. Then ask one follow-up about what to adjust.
 - For "what should I watch now", ask how much time and what they want to get better at, then recommend 3 videos with show_playlist.
+- For a study plan or schedule: ask goal, level, minutes per day and deadline if unknown, run several search_catalogue calls, order videos from beginner to advanced, then call save_plan with 8 to 40 ids. Tell them they confirm it with the Use this plan button.
 - If the user pastes a YouTube link: call fetch_youtube. If it is already in the catalogue, say so. If not, pick the best topic node and level from the taxonomy and call propose_video. Explain that it will only appear for them.
 - Prefer videos that are not outdated. Say so when something in a fast-moving area is old.
 - Keep text short, plain and direct. No emojis. No filler.
@@ -208,6 +211,7 @@ export class Chat {
           if (name === "search_catalogue") { this.status = `Searching: ${args.query || args.node || args.section || "the catalogue"}`; this.emit(); part.functionResponse!.response = { results: search(d, args) }; needModel = true; }
           else if (name === "fetch_youtube") { this.status = "Reading the video"; this.emit(); part.functionResponse!.response = await this.fetchYt(d, String(args.url || "")); needModel = true; }
           else if (name === "show_playlist") { const r = this.showPlaylist(d, args); part.functionResponse!.response = r; if (r.error) needModel = true; }
+          else if (name === "save_plan") { const r = this.showPlaylist(d, { title: args.goal, description: `${args.minutes_per_day || 30} minutes a day`, ids: args.ids, notes: args.notes }, Math.max(10, Math.min(240, Number(args.minutes_per_day) || 30))); part.functionResponse!.response = r; if (r.error) needModel = true; }
           else if (name === "propose_video") { const r = this.proposeVideo(d, args); part.functionResponse!.response = r; if (r.error) needModel = true; }
           else if (name === "ask_user") {
             const qs = (Array.isArray(args.questions) ? args.questions : []) as Question[];
@@ -237,13 +241,13 @@ export class Chat {
     } finally { this.busy = false; this.status = ""; this.emit(); }
   }
 
-  private showPlaylist(d: Data, a: Record<string, unknown>): Record<string, unknown> {
+  private showPlaylist(d: Data, a: Record<string, unknown>, plan?: number): Record<string, unknown> {
     const ids = (Array.isArray(a.ids) ? a.ids : []).map(String);
     const notes = (Array.isArray(a.notes) ? a.notes : []).map(String);
     const seen = new Set<string>(); const keep: string[] = []; const nm: Record<string, string> = {};
     ids.forEach((id, k) => { if (d.byId.has(id) && !seen.has(id)) { seen.add(id); keep.push(id); if (notes[k]) nm[id] = notes[k]; } });
     if (keep.length < 2) return { error: "Fewer than 2 ids exist in the catalogue. Use ids from search_catalogue." };
-    this.items.push({ kind: "playlist", title: String(a.title || "Playlist"), desc: String(a.description || ""), ids: keep, notes: nm });
+    this.items.push({ kind: "playlist", title: String(a.title || "Playlist"), desc: String(a.description || ""), ids: keep, notes: nm, plan });
     return { shown: true, videos: keep.length, dropped: ids.length - keep.length };
   }
 

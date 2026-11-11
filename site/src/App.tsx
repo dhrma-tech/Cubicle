@@ -5,9 +5,13 @@ import { go, Toaster } from "./components";
 import { Explore } from "./explore";
 import { Scroll } from "./scroll";
 import { PlaylistView, Playlists } from "./aipage";
+import { Watch } from "./watch";
+import { Palette } from "./palette";
+import { FollowingPage, newCount, PlanPage, QueuePage, ReviewPage, SkillsPage, TodayCard } from "./studypages";
+import { dueReviews, useStudy } from "./study";
 import { AIPanel } from "./aipanel";
 import { closeAI, openAI, toggleAI, useAIOpen } from "./aistate";
-import { About, Browse, Home, Learn, NodePage, NotFound, Prep, ProgressPage, Saved, SectionPage, SettingsPage, Watch } from "./views";
+import { About, Browse, Home, Learn, NodePage, NotFound, Prep, ProgressPage, Saved, SectionPage, SettingsPage } from "./views";
 
 function parse() {
   const h = location.hash.replace(/^#/, "") || "/";
@@ -44,6 +48,12 @@ const ICONS: Record<string, string> = {
   settings: "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2",
   ai: "M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18",
   playlists: "M4 6h12M4 11h12M4 16h7M18 13v6M15 16h6",
+  find: "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4",
+  plan: "M5 4h14v16H5zM9 9h6M9 13h6M9 17h3",
+  queue: "M4 6h12M4 11h12M4 16h8M17 14l4 2.5-4 2.5z",
+  review: "M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4M9.5 12l2 2 3.5-4",
+  skills: "M4 20V10M10 20V4M16 20v-7M22 20H2",
+  follow: "M12 21s-7-4.4-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2M18 15v6M15 18h6",
   scroll: "M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM10 17h4M12 7v6M9.5 10.5L12 13l2.5-2.5",
   explore: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15.5 8.5l-2 5-5 2 2-5z",
   about: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01",
@@ -54,16 +64,18 @@ const Ico = ({ n }: { n: string }) => (
 
 const SHORTCUTS: [string, string][] = [
   ["/", "Search"], ["j / k", "Next / previous video"], ["Enter", "Open the selected video"], ["l", "Like the selected video"],
-  ["w", "Add to watch later"], ["d", "Mark done"], ["g then h", "Go home"], ["g then e", "Go to Explore"], ["g then r", "Go to Pro-Scroll"], ["g then a", "Ask AI"], ["g then s", "Go to the syllabus"], ["g then p", "Go to interview prep"], ["?", "Show this list"],
+  ["w", "Add to watch later"], ["d", "Mark done"], ["g then h", "Go home"], ["g then e", "Go to Explore"], ["g then r", "Go to Pro-Scroll"], ["g then a", "Ask AI"], ["g then s", "Go to the syllabus"], ["g then q", "Go to Up next"], ["g then v", "Go to Review"], ["n", "Note at the current time (watch page)"], ["Ctrl/Cmd + K", "Command palette"], ["g then p", "Go to interview prep"], ["?", "Show this list"],
 ];
 
 export default function App() {
   const { data, error } = useData();
   const route = useRoute();
   const st = useStore();
+  const sy = useStudy();
   const [railOpen, setRailOpen] = useState(false);
   const [mini, setMini] = useState(() => { try { return localStorage.getItem("devtube.rail") !== "full"; } catch { return true; } });
   const [help, setHelp] = useState(false);
+  const [pal, setPal] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const sel = useRef(-1);
   const gPending = useRef(false);
@@ -88,12 +100,13 @@ export default function App() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); setPal((p) => !p); return; }
       const t = e.target as HTMLElement;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) { if (e.key === "Escape") t.blur(); return; }
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (gPending.current) {
         gPending.current = false;
-        const m: Record<string, string> = { h: "/", e: "/explore", r: "/scroll", s: "/learn", p: "/prep", l: "/liked" };
+        const m: Record<string, string> = { q: "/queue", v: "/review", h: "/", e: "/explore", r: "/scroll", s: "/learn", p: "/prep", l: "/liked" };
         if (e.key === "a") { toggleAI(); e.preventDefault(); return; }
         if (m[e.key]) { go(m[e.key]); e.preventDefault(); return; }
       }
@@ -135,7 +148,12 @@ export default function App() {
   else if (!data) body = <div className="page"><p className="loading" role="status">Loading the catalogue…</p></div>;
   else {
     switch (p0) {
-      case undefined: body = <Home data={data} q={route.q} />; break;
+      case undefined: body = <Home data={data} q={route.q} top={<TodayCard data={data} />} />; break;
+      case "plan": body = <PlanPage data={data} />; break;
+      case "queue": body = <QueuePage data={data} />; break;
+      case "review": body = <ReviewPage data={data} />; break;
+      case "skills": body = <SkillsPage data={data} />; break;
+      case "following": body = <FollowingPage data={data} />; break;
       case "explore": body = <Explore q={route.q} />; break;
       case "scroll": body = <Scroll q={route.q} data={data} />; break;
       case "playlists": body = <Playlists data={data} />; break;
@@ -176,10 +194,17 @@ export default function App() {
         {link("#/explore", "Explore", "explore", "explore")}
         {link("#/scroll", "Pro-Scroll", "scroll", "scroll", undefined, active === "scroll", "Scroll")}
         <button type="button" className={"nav" + (aiOpen ? " on" : "")} title="Ask AI" onClick={() => { toggleAI(); setRailOpen(false); }}><Ico n="ai" /><span className="lb"><span className="lg">Ask AI</span><span className="sh">Ask AI</span></span></button>
+        <button type="button" className="nav" title="Quick find (Ctrl or Cmd + K)" onClick={() => { setPal(true); setRailOpen(false); }}><Ico n="find" /><span className="lb"><span className="lg">Quick find</span><span className="sh">Find</span></span></button>
         {link("#/learn", "Syllabus", "learn", "learn")}
         {link("#/prep", "Interview prep", "prep", "prep", undefined, active === "prep", "Prep")}
         {link("#/browse", "Most recommended", "browse", "best", undefined, active === "browse" && route.q.get("dur") !== "long", "Top")}
         {data?.meta.hasDuration ? link("#/browse?dur=long", "Longs", "longs", "longs", undefined, active === "browse" && route.q.get("dur") === "long") : null}
+        <hr />
+        {link("#/plan", "Study plan", "plan", "plan", undefined, active === "plan", "Plan")}
+        {link("#/queue", "Up next", "queue", "queue", sy.queue.length)}
+        {link("#/review", "Review", "review", "review", dueReviews(sy).length)}
+        {link("#/skills", "Skills and report", "skills", "skills", undefined, active === "skills", "Skills")}
+        {link("#/following", "Following", "following", "follow", data ? newCount(data, sy, st.done) : 0)}
         <hr />
         {link("#/liked", "Liked", "liked", "liked", st.liked.length)}
         {link("#/later", "Watch later", "later", "later", st.later.length)}
@@ -204,6 +229,7 @@ export default function App() {
       <main id="main" tabIndex={-1} key={route.path.join("/")}>{body}</main>
       {data ? <AIPanel data={data} /> : null}
 
+      {pal && data ? <Palette data={data} onClose={() => setPal(false)} /> : null}
       <Toaster />
 
       {help ? (

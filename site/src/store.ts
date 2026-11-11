@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import type { State } from "./types";
+import { study } from "./study";
 
 const KEY = "devtube:v1";
 const fresh = (): State => ({
@@ -38,8 +39,10 @@ export const actions = {
   toggleLater: (id: string) => commit({ ...state, later: toggle(state.later, id) }),
   toggleDone: (id: string) => {
     const done = { ...state.done };
-    if (done[id]) delete done[id]; else done[id] = Date.now();
+    const was = !!done[id];
+    if (was) delete done[id]; else done[id] = Date.now();
     commit({ ...state, done });
+    if (was) study.unschedule(id); else study.schedule(id, "v");
   },
   visit: (id: string) => {
     const h = state.history.filter((x) => x.id !== id);

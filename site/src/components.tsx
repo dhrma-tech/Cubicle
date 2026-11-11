@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { Video } from "./types";
 import { actions, useStore } from "./store";
 import { fmtDur, LEVEL_NAME, type Data } from "./data";
+import { study, useStudy } from "./study";
 
 export const go = (hash: string) => { location.hash = hash; };
 
@@ -180,6 +181,7 @@ export function YtCard({ v, data, home }: { v: Video; data: Data; home?: boolean
   const liked = s.liked.includes(v.i), later = s.later.includes(v.i), done = !!s.done[v.i];
   const seen = s.history.some((h) => h.id === v.i);
   const node = data.nodes.get(v.n);
+  const sy = useStudy(); const inQ = sy.queue.includes(v.i); const fol = sy.follows.channels.includes(v.c);
 
   useEffect(() => {
     if (!menu) return;
@@ -244,6 +246,8 @@ export function YtCard({ v, data, home }: { v: Video; data: Data; home?: boolean
               {item(later ? "Remove from Watch later" : "Save to Watch later", () => toggleLater(v.i, later))}
               {item(liked ? "Remove from Liked" : "Add to Liked", () => toggleLike(v.i, liked))}
               {item(done ? "Mark as not done" : "Mark as done", () => toggleDone(v.i, done))}
+              {item(inQ ? "Remove from Up next" : "Add to Up next", () => { if (inQ) study.dequeue(v.i); else { study.enqueue(v.i); toast("Added to Up next", () => study.dequeue(v.i)); } })}
+              {item(fol ? `Unfollow ${v.c}` : `Follow ${v.c}`, () => { study.toggleChannel(v.c); toast(fol ? `Unfollowed ${v.c}` : `Following ${v.c}`); })}
               {item("Copy link", copy)}
               <a role="menuitem" href={`https://www.youtube.com/watch?v=${v.i}`} target="_blank" rel="noreferrer noopener" onClick={() => setMenu(false)}>Open on YouTube</a>
               {home ? <hr /> : null}

@@ -1,3 +1,4 @@
+import { study } from "./study";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { openAI } from "./aistate";
 import { fmtDur, type Data } from "./data";
@@ -54,6 +55,7 @@ export function PlaylistCard({ item, data, chat }: { item: Extract<Item, { kind:
     item.saved = id; chat.touch();
     toast("Playlist saved");
   };
+  const usePlan = () => { study.setPlan({ goal: item.title, items: item.ids.map((id) => ({ id })), created: Date.now(), perDay: item.plan || 30 }); item.planSaved = true; chat.touch(); toast("Study plan saved. It shows on Home."); };
   return (
     <div className="ai-card ai-pl">
       <header>
@@ -77,7 +79,8 @@ export function PlaylistCard({ item, data, chat }: { item: Extract<Item, { kind:
         })}
       </ol>
       <footer>
-        {item.saved ? <><span className="ai-saved">Saved</span><a className="btn" href={`#/playlist/${item.saved}`}>Open playlist</a></> : <button className="btn btn-primary" onClick={save}>Save playlist</button>}
+        {item.plan ? (item.planSaved ? <><span className="ai-saved">Plan active</span><a className="btn" href="#/plan">Open plan</a></> : <button className="btn btn-primary" onClick={usePlan}>Use this plan</button>) : null}
+        {item.saved ? <><span className="ai-saved">Saved</span><a className="btn" href={`#/playlist/${item.saved}`}>Open playlist</a></> : <button className={"btn" + (item.plan ? "" : " btn-primary")} onClick={save}>Save playlist</button>}
       </footer>
     </div>
   );

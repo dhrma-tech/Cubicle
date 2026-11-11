@@ -1,3 +1,4 @@
+import { study } from "./study";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Thumb, toast } from "./components";
 import { fmtDur, LEVEL_NAME, type Data } from "./data";
@@ -223,6 +224,7 @@ export function Scroll({ q, data }: { q: URLSearchParams; data: Data }) {
   const learn = (s: Short) => {
     const was = ssRef.current.learned.includes(s.i);
     scrollActions.toggleLearned(s.i);
+    if (was) study.unschedule(s.i); else study.schedule(s.i, "s", s.t);
     toast(was ? "Unmarked" : "Marked as learned", () => scrollActions.toggleLearned(s.i));
   };
   const hide = (s: Short, n: number) => {

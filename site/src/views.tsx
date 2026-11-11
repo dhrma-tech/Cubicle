@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Video } from "./types";
 import { actions, useStore } from "./store";
+import { study, useStudy } from "./study";
 import { fmtDur, LEVEL_NAME, pathOrder, SHELF_NAME, type Data } from "./data";
 import { Actions, Empty, freshText, go, LevelTag, Thumb, Vouch, VideoRow, YtCard } from "./components";
 
@@ -16,7 +17,7 @@ export function setParam(key: string, val: string | null) {
 
 const pct = (a: number, b: number) => (b ? Math.round((a / b) * 100) : 0);
 
-function Progress({ done, total }: { done: number; total: number }) {
+export function Progress({ done, total }: { done: number; total: number }) {
   return (
     <span className="prog" role="img" aria-label={`${done} of ${total} done`}>
       <i style={{ width: `${pct(done, total)}%` }} />
@@ -24,7 +25,7 @@ function Progress({ done, total }: { done: number; total: number }) {
   );
 }
 
-function PageHead({ title, sub, children }: { title: string; sub?: string; children?: React.ReactNode }) {
+export function PageHead({ title, sub, children }: { title: string; sub?: string; children?: React.ReactNode }) {
   return (
     <header className="page-head">
       <div>
@@ -176,7 +177,7 @@ const IconChev = ({ dir }: { dir: "l" | "r" }) => (
   </svg>
 );
 
-export function Home({ data, q }: { data: Data; q: URLSearchParams }) {
+export function Home({ data, q, top }: { data: Data; q: URLSearchParams; top?: React.ReactNode }) {
   const s = useStore();
   const chipId = q.get("c") || "all";
   const [shown, setShown] = useState(PAGE);
@@ -238,6 +239,7 @@ export function Home({ data, q }: { data: Data; q: URLSearchParams }) {
         {edge.r ? <button type="button" className="chip-arrow r" aria-label="Scroll chips right" onClick={() => nudge(1)}><IconChev dir="r" /></button> : null}
       </div>
 
+      {chipId === "all" ? top : null}
       {!s.introDismissed && chipId === "all" ? (
         <aside className="intro" aria-label="About DEV Tube">
           <p><b>{data.videos.length.toLocaleString()} videos</b> for machine learning, AI engineering, programming, DSA and interviews. Each one is here because several independent people or course lists recommended it. No account needed.</p>
@@ -320,13 +322,16 @@ export function SectionPage({ id, q, data }: { id: string; q: URLSearchParams; d
 }
 
 export function NodePage({ id, q, data }: { id: string; q: URLSearchParams; data: Data }) {
+  const fs = useStudy();
   const n = data.nodes.get(id);
   if (!n) return <NotFound />;
   const sec = data.sections.find((x) => x.id === n.section)!;
   return (
     <div className="page">
       <p className="crumb"><a href="#/learn">Syllabus</a> / <a href={`#/s/${sec.id}`}>{sec.title}</a></p>
-      <PageHead title={n.title} sub={`${n.count} videos. ${SHELF_NAME[n.shelf.charAt(0) as "e" | "s" | "f"] ?? ""}.`} />
+      <PageHead title={n.title} sub={`${n.count} videos. ${SHELF_NAME[n.shelf.charAt(0) as "e" | "s" | "f"] ?? ""}.`} >
+        <button className="btn" type="button" onClick={() => study.toggleTopic(n.id)}>{fs.follows.topics.includes(n.id) ? "Following" : "Follow topic"}</button>
+      </PageHead>
       <Catalog base={data.byNode.get(id) || []} q={q} data={data} showNode={false} sortDefault="path" />
     </div>
   );
@@ -363,67 +368,8 @@ export function Saved({ kind, data, q }: { kind: "liked" | "later" | "history"; 
   );
 }
 
-/* ============================== Watch ============================== */
-export function Watch({ id, data }: { id: string; data: Data }) {
-  const v = data.byId.get(id);
-  const visited = useRef<string | null>(null);
-  if (v && visited.current !== id) { visited.current = id; queueMicrotask(() => actions.visit(id)); }
-  if (!v) return <NotFound />;
-  const node = data.nodes.get(v.n);
-  const sec = data.sections.find((x) => x.id === v.s);
-  const siblings = (data.byNode.get(v.n) || []);
-  const idx = siblings.findIndex((x) => x.i === v.i);
-  const next = [...siblings.slice(idx + 1), ...siblings.slice(0, idx)].slice(0, 6);
-  return (
-    <div className="watch">
-      <div className="watch-main">
-        <div className="player">
-          <iframe title={v.t} src={`https://www.youtube-nocookie.com/embed/${v.i}?rel=0&modestbranding=1`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
-        </div>
-        <h1 className="watch-title">{v.t}</h1>
-        <p className="row-meta">
-          <span>{v.c}</span><LevelTag v={v} />
-          {node ? <a className="node-link" href={`#/n/${v.n}`}>{node.title}</a> : null}
-          {v.p ? <span>{v.p}</span> : null}{v.d ? <span>{fmtDur(v.d)}</span> : null}
-        </p>
-        <Actions id={v.i} />
-        <a className="textlink" href={`https://www.youtube.com/watch?v=${v.i}`} target="_blank" rel="noreferrer noopener">Open on YouTube</a>
-
-        <section className="why" aria-labelledby="why-h">
-          <h2 id="why-h">Why it is here</h2>
-          <Vouch v={v} wide />
-          <ul className="why-list">
-            {v.hn ? <li>{v.hn} {v.hn === 1 ? "person" : "people"} on Hacker News linked it{v.rc ? `, ${v.rc} of them while recommending it` : ""}{v.y[0] ? `, between ${v.y[0]} and ${v.y[1]}` : ""}.</li> : null}
-            {v.sr ? <li>It appears in {v.sr} course {v.sr === 1 ? "list" : "lists"}: {v.src.join(", ")}.</li> : null}
-            {!v.hn && !v.sr ? <li>It comes from a channel on the trusted list.</li> : null}
-            <li className={v.o ? "warn" : ""}>{freshText(v)}</li>
-          </ul>
-          {v.w ? (
-            <blockquote className="hn-quote">
-              {v.w[1]}
-              <footer><a href={`https://news.ycombinator.com/item?id=${v.w[0]}`} target="_blank" rel="noreferrer noopener">Hacker News comment</a></footer>
-            </blockquote>
-          ) : null}
-        </section>
-      </div>
-      <aside className="watch-side" aria-label="Next in this topic">
-        <h2>{node ? `More in ${node.title}` : "Related"}</h2>
-        {sec ? <p className="crumb"><a href={`#/s/${sec.id}`}>{sec.title}</a></p> : null}
-        <ol className="next">
-          {next.map((x) => (
-            <li key={x.i}>
-              <a href={`#/watch/${x.i}`}><Thumb v={x} /><span className="next-t">{x.t}<small>{x.c} · {LEVEL_NAME[x.l]}</small></span></a>
-            </li>
-          ))}
-        </ol>
-      </aside>
-    </div>
-  );
-}
-
 /* ============================== Interview prep ============================== */
-const TRACKS = [
+export const TRACKS = [
   { id: "coding", title: "Coding interviews", blurb: "Data structures, algorithms and how to practice them.", nodes: ["dsa-complexity", "dsa-arrays", "dsa-pointers", "dsa-linked", "dsa-search-sort", "dsa-trees", "dsa-graphs", "dsa-heaps", "dsa-backtracking", "dsa-dp", "dsa-greedy-bits", "dsa-practice", "dsa-full", "cr-coding"] },
   { id: "ml", title: "ML theory and statistics", blurb: "The questions behind every data science and ML engineer loop.", nodes: ["probability", "stats", "linalg", "calculus", "optimization", "ml-supervised", "ml-trees", "ml-eval", "dl-training", "cr-ml-interview"] },
   { id: "ai", title: "AI and LLM engineer interviews", blurb: "How models work and how you build on them.", nodes: ["llm-attention", "llm-tokens", "llm-inference-internals", "ae-vector", "ae-rag", "ae-agents", "ae-evals", "ae-finetune", "ae-context", "cr-ai-interview", "cr-fde"] },
