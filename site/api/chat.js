@@ -59,6 +59,7 @@ export default async function handler(req, res) {
     const text = await r.text();
     res.setHeader("x-ai-ms", String(Date.now() - t0));
     if (r.status === 429) return res.status(429).json({ error: "quota" });
+    if (r.status === 401 || r.status === 403) console.error("gemini rejected key", r.status, text.slice(0, 400));
     if (r.status === 401 || r.status === 403) return res.status(502).json({ error: "server_key", detail: text.slice(0, 300) });
     res.status(r.status).setHeader("content-type", "application/json").send(text);
   } catch (e) {

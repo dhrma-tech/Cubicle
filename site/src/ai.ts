@@ -25,7 +25,7 @@ export const STARTERS = [
 
 /* ---------- Gemini ---------- */
 const MODEL = "gemini-2.5-flash";
-class AIError extends Error { constructor(public code: string) { super(code); } }
+class AIError extends Error { constructor(public code: string, public detail = "") { super(code); } }
 
 const str = (type: string, description?: string) => ({ type, description });
 const DECLS = [
@@ -81,7 +81,7 @@ async function callGemini(body: Record<string, unknown>) {
     if (r.status === 404 || r.status === 405 || !j) throw new AIError("no_proxy");
     if (r.status === 503) throw new AIError("not_configured");
     if (r.status === 504 || j.error === "timeout") throw new AIError("timeout");
-    if (j.error === "server_key") throw new AIError("server_key");
+    if (j.error === "server_key") { let m = ""; try { m = (JSON.parse(String((j as { detail?: string }).detail)) as { error?: { message?: string } }).error?.message ?? ""; } catch { m = String((j as { detail?: string }).detail ?? "").slice(0, 160); } throw new AIError("server_key", m); }
     if (r.status === 429) throw new AIError(j.error === "daily_limit" ? "daily_limit" : "quota");
   } else {
     if (r.status === 400 || r.status === 403) throw new AIError("bad_key");
@@ -218,7 +218,8 @@ export class Chat {
       }
     } catch (e) {
       const code = e instanceof AIError ? e.code : "upstream";
-      this.items.push({ kind: "error", ...(ERR[code] ?? ERR.upstream) });
+      const er = ERR[code] ?? ERR.upstream;
+      this.items.push({ kind: "error", ...er, text: er.text + (e instanceof AIError && e.detail ? ` Google said: ${e.detail.slice(0, 220)}` : "") });
       // drop unanswered tool calls so the history stays valid, then let the user retry the same message
       for (;;) {
         const last = this.history[this.history.length - 1];
