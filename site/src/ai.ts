@@ -24,7 +24,7 @@ export const STARTERS = [
 ];
 
 /* ---------- Gemini ---------- */
-const MODEL = "gemini-3.6-flash";   // stable Flash; the "latest" alias pointed at a slower, newer model
+const MODELS = ["gemini-3.6-flash", "gemini-3.5-flash-lite"];   // stable Flash; the "latest" alias pointed at a slower, newer model
 class AIError extends Error { constructor(public code: string, public detail = "") { super(code); } }
 
 const str = (type: string, description?: string) => ({ type, description });
@@ -62,11 +62,11 @@ Taxonomy (section: node id (title, level))
 ${tax}${page ? `\n\nCurrent page (what the user is looking at right now)\n${page}` : ""}`;
 }
 
-async function callGemini(body: Record<string, unknown>, thinking = true): Promise<{ candidates?: { content?: Content }[]; promptFeedback?: { blockReason?: string } }> {
+async function callGemini(body: Record<string, unknown>, thinking = true, mi = 0): Promise<{ candidates?: { content?: Content }[]; promptFeedback?: { blockReason?: string } }> {
   const key = geminiKey();
   let r: Response;
   try {
-    r = await fetch(key ? `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent` : "/api/chat", {
+    r = await fetch(key ? `https://generativelanguage.googleapis.com/v1beta/models/${MODELS[mi]}:generateContent` : "/api/chat", {
       method: "POST", headers: { "content-type": "application/json", ...(key ? { "x-goog-api-key": key } : {}) },
       body: JSON.stringify(key ? { ...body, ...(thinking ? { generationConfig: { ...(body.generationConfig as object), thinkingConfig: { thinkingLevel: "low" } } } : {}), toolConfig: { functionCallingConfig: { mode: "AUTO" } } } : body),
       signal: AbortSignal.timeout(58_000),
@@ -75,7 +75,8 @@ async function callGemini(body: Record<string, unknown>, thinking = true): Promi
   const text = await r.text();
   let j: { error?: string | { message?: string }; [k: string]: unknown } | null = null;
   try { j = JSON.parse(text); } catch { /* not JSON */ }
-  if (key && thinking && r.status === 400 && !/api key|api_key/i.test(text)) return callGemini(body, false);   // model refused the thinking setting
+  if (key && thinking && r.status === 400 && !/api key|api_key/i.test(text)) return callGemini(body, false, mi);   // model refused the thinking setting
+  if (key && (r.status === 503 || r.status === 500 || r.status === 429) && mi < MODELS.length - 1) return callGemini(body, thinking, mi + 1);   // busy: try the lighter model
   const gm = typeof j?.error === "object" ? String(j.error?.message ?? "") : "";
   if (r.ok && j) return j as { candidates?: { content?: Content }[]; promptFeedback?: { blockReason?: string } };
   if (!key) {
@@ -83,6 +84,7 @@ async function callGemini(body: Record<string, unknown>, thinking = true): Promi
     if (r.status === 404 || r.status === 405 || !j) throw new AIError("no_proxy");
     if (r.status === 503) throw new AIError("not_configured");
     if (r.status === 504 || j.error === "timeout") throw new AIError("timeout");
+    if (j.error === "busy") throw new AIError("busy", String((j as { detail?: string }).detail ?? ""));
     if (j.error === "server_key") { let m = ""; try { m = (JSON.parse(String((j as { detail?: string }).detail)) as { error?: { message?: string } }).error?.message ?? ""; } catch { m = String((j as { detail?: string }).detail ?? "").slice(0, 160); } throw new AIError("server_key", m); }
     if (r.status === 429) throw new AIError(j.error === "daily_limit" ? "daily_limit" : "quota");
   } else {
@@ -99,6 +101,7 @@ const ERR: Record<string, { text: string; key?: boolean }> = {
   bad_key: { text: "Gemini rejected that key. Check it in AI Studio and paste it again.", key: true },
   quota: { text: "Gemini is rate limited right now. Wait a minute and try again, or add your own key for a separate limit.", key: true },
   server_key: { text: "The site's Gemini key was rejected by Google. The site owner needs to check GEMINI_API_KEY. You can use your own key meanwhile.", key: true },
+  busy: { text: "The AI is busy right now. Try again in a moment." },
   timeout: { text: "The AI took too long to answer. Try again, or ask something shorter." },
   network: { text: "Could not reach the AI. Check your connection and try again." },
   blocked: { text: "Gemini declined to answer that. Try rewording it." },

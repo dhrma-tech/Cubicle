@@ -1,15 +1,15 @@
-// Vercel function: forwards chat requests to Gemini so the key never reaches the browser.
-// Set GEMINI_API_KEY in Vercel (Settings, Environment Variables). Optional: GEMINI_MODEL, AI_DAILY_LIMIT.
+// Vercel function: forwards chat requests to an AI provider so keys never reach the browser.
+// Providers are tried in order and the next one takes over when one is busy, rate limited or rejects the key.
+// Set at least one key in Vercel (Settings, Environment Variables):
+//   GEMINI_API_KEY, GROQ_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY (OPENAI_BASE_URL works for OpenRouter, Together, etc.)
+// Optional: AI_PROVIDERS (order, default "gemini,groq,anthropic,openai"), GEMINI_MODEL, GROQ_MODEL, ANTHROPIC_MODEL, OPENAI_MODEL, AI_DAILY_LIMIT.
 // The per-visitor limit is kept in memory, so it is best effort: it resets when the function restarts.
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.6-flash";
-// AI Studio now issues keys that start with "AQ." as well. Those work on the Gemini API host. Vertex express-mode keys also start
-// with "AQ.", so when the Gemini API refuses one, the same key is tried on the Vertex host.
-const HOSTS = [
-  (m) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,
-  (m) => `https://aiplatform.googleapis.com/v1/publishers/google/models/${m}:generateContent`,
-];
-const LIMIT = Number(process.env.AI_DAILY_LIMIT || 60);
+import { forGemini, fromAnthropic, fromOpenAI, toAnthropic, toOpenAI } from "./_providers.js";
+
+const env = process.env;
+const LIMIT = Number(env.AI_DAILY_LIMIT || 60);
 const hits = new Map();
+const BUDGET_MS = 54_000;
 
 function allowed(ip) {
   const day = new Date().toISOString().slice(0, 10);
@@ -20,60 +20,104 @@ function allowed(ip) {
   return { ok: n <= LIMIT, left: Math.max(0, LIMIT - n) };
 }
 
-// Gemini with tools can take a while; the default 10 s limit would cut it off.
+const post = (url, headers, body, ms) => fetch(url, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body), signal: AbortSignal.timeout(ms) });
+const readJson = async (r) => { const text = await r.text(); try { return { text, json: JSON.parse(text) }; } catch { return { text, json: null }; } };
+
+/* Each provider: (body, maxTokens, ms) -> { ok, status, json (Gemini shaped when ok), text } */
+const PROVIDERS = {
+  gemini: {
+    key: () => env.GEMINI_API_KEY,
+    async call(body, maxTokens, ms) {
+      const key = env.GEMINI_API_KEY;
+      const models = [...new Set([env.GEMINI_MODEL || "gemini-3.6-flash", "gemini-3.5-flash-lite"])];
+      const hosts = [(m) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`];
+      if (key.startsWith("AQ.")) hosts.push((m) => `https://aiplatform.googleapis.com/v1/publishers/google/models/${m}:generateContent`);   // Vertex express-mode keys
+      const payload = {
+        contents: forGemini(body.contents), systemInstruction: body.systemInstruction,
+        tools: body.tools?.length ? body.tools : undefined, toolConfig: body.tools?.length ? { functionCallingConfig: { mode: "AUTO" } } : undefined,
+        generationConfig: { temperature: 0.4, maxOutputTokens: maxTokens },
+      };
+      const thin = { ...payload, generationConfig: { ...payload.generationConfig, thinkingConfig: { thinkingLevel: "low" } } };
+      const deadline = Date.now() + ms; let last = { ok: false, status: 0, text: "no attempt" };
+      for (const model of models) for (const host of hosts) {
+        const left = deadline - Date.now(); if (left < 1500) return last;
+        try {
+          let r = await post(host(model), { "x-goog-api-key": key }, thin, Math.min(left, 25_000));
+          if (r.status === 400) r = await post(host(model), { "x-goog-api-key": key }, payload, Math.min(deadline - Date.now(), 25_000));   // model refused the thinking setting
+          const { text, json } = await readJson(r);
+          if (r.ok && json) return { ok: true, status: 200, json, text };
+          last = { ok: false, status: r.status, text };
+          if (r.status === 401 || r.status === 403) continue;   // maybe the other host knows this key
+        } catch (e) { last = { ok: false, status: e?.name === "TimeoutError" ? 504 : 502, text: String(e?.message || e) }; }
+      }
+      return last;
+    },
+  },
+  groq: {
+    key: () => env.GROQ_API_KEY,
+    call: (body, maxTokens, ms) => openaiLike("https://api.groq.com/openai/v1", env.GROQ_API_KEY, env.GROQ_MODEL || "llama-3.3-70b-versatile", body, maxTokens, ms),
+  },
+  openai: {
+    key: () => env.OPENAI_API_KEY,
+    call: (body, maxTokens, ms) => openaiLike((env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, ""), env.OPENAI_API_KEY, env.OPENAI_MODEL || "gpt-4.1-mini", body, maxTokens, ms),
+  },
+  anthropic: {
+    key: () => env.ANTHROPIC_API_KEY,
+    async call(body, maxTokens, ms) {
+      try {
+        const r = await post("https://api.anthropic.com/v1/messages", { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" }, toAnthropic(body, env.ANTHROPIC_MODEL || "claude-haiku-5-5", maxTokens), ms);
+        const { text, json } = await readJson(r);
+        return r.ok && json ? { ok: true, status: 200, json: fromAnthropic(json), text } : { ok: false, status: r.status, text };
+      } catch (e) { return { ok: false, status: e?.name === "TimeoutError" ? 504 : 502, text: String(e?.message || e) }; }
+    },
+  },
+};
+async function openaiLike(base, key, model, body, maxTokens, ms) {
+  try {
+    const r = await post(`${base}/chat/completions`, { authorization: `Bearer ${key}` }, toOpenAI(body, model, maxTokens), ms);
+    const { text, json } = await readJson(r);
+    return r.ok && json ? { ok: true, status: 200, json: fromOpenAI(json), text } : { ok: false, status: r.status, text };
+  } catch (e) { return { ok: false, status: e?.name === "TimeoutError" ? 504 : 502, text: String(e?.message || e) }; }
+}
+
+// Gemini 3 needs a bit longer than the others, so it gets a larger share of the time budget.
+const SHARE = { gemini: 28_000, groq: 14_000, anthropic: 20_000, openai: 20_000 };
+
+// Gemini calls are slow enough that the Vercel default of 10 s would cut them off.
 export const config = { maxDuration: 60 };
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") return res.status(405).json({ error: "method" });
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return res.status(503).json({ error: "not_configured" });
+  const order = String(env.AI_PROVIDERS || "gemini,groq,anthropic,openai").split(",").map((s) => s.trim().toLowerCase()).filter((id) => PROVIDERS[id] && PROVIDERS[id].key());
+  if (!order.length) return res.status(503).json({ error: "not_configured" });
 
   const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
   if (JSON.stringify(body).length > 250_000) return res.status(413).json({ error: "too_large" });
   if (!Array.isArray(body.contents) || !body.contents.length) return res.status(400).json({ error: "bad_request" });
   // only function declarations are allowed: no search grounding, code execution or other paid tools
-  const tools = Array.isArray(body.tools) ? body.tools.filter((t) => t && t.functionDeclarations).map((t) => ({ functionDeclarations: t.functionDeclarations })) : [];
+  body.tools = Array.isArray(body.tools) ? body.tools.filter((t) => t && t.functionDeclarations).map((t) => ({ functionDeclarations: t.functionDeclarations })) : [];
 
   const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown").split(",")[0].trim();
   const lim = allowed(ip);
   res.setHeader("x-ai-left", String(lim.left));
   if (!lim.ok) return res.status(429).json({ error: "daily_limit" });
 
-  const payload = {
-    contents: body.contents,
-    systemInstruction: body.systemInstruction,
-    tools: tools.length ? tools : undefined,
-    toolConfig: tools.length ? { functionCallingConfig: { mode: "AUTO" } } : undefined,
-    generationConfig: { temperature: 0.4, maxOutputTokens: Math.min(Number(body.generationConfig?.maxOutputTokens) || 2048, 3000) },
-  };
-  const call = (p, host, ms) => fetch(HOSTS[host](MODEL), {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-goog-api-key": key },
-    body: JSON.stringify(p),
-    signal: AbortSignal.timeout(ms),
-  });
-  const t0 = Date.now();
-  const thin = { ...payload, generationConfig: { ...payload.generationConfig, thinkingConfig: { thinkingLevel: "low" } } };
-  const attempt = async (host, ms) => {
-    // thinking off keeps answers fast; if the model rejects that setting, retry with its defaults
-    let r = await call(thin, host, ms);
-    if (r.status === 400) r = await call(payload, host, ms);
-    return r;
-  };
-  try {
-    let r = await attempt(0, key.startsWith("AQ.") ? 35_000 : 50_000);
-    if (key.startsWith("AQ.") && [400, 401, 403].includes(r.status)) {
-      const first = await r.text();
-      const r2 = await attempt(1, 20_000);
-      if (r2.ok) r = r2; else { console.error("gemini rejected key", r.status, first.slice(0, 300), "| vertex", r2.status); return res.status(502).json({ error: "server_key", detail: first.slice(0, 300) }); }
+  const maxTokens = Math.min(Number(body.generationConfig?.maxOutputTokens) || 2048, 3000);
+  const t0 = Date.now(); const failures = [];
+  for (const id of order) {
+    const left = BUDGET_MS - (Date.now() - t0);
+    if (left < 2500) break;
+    const r = await PROVIDERS[id].call(body, maxTokens, Math.min(left, SHARE[id] || 20_000));
+    if (r.ok) {
+      res.setHeader("x-ai-provider", id); res.setHeader("x-ai-ms", String(Date.now() - t0));
+      return res.status(200).json(r.json);
     }
-    const text = await r.text();
-    res.setHeader("x-ai-ms", String(Date.now() - t0));
-    if (r.status === 429) return res.status(429).json({ error: "quota" });
-    if (r.status === 401 || r.status === 403) { console.error("gemini rejected key", r.status, text.slice(0, 400)); return res.status(502).json({ error: "server_key", detail: text.slice(0, 300) }); }
-    res.status(r.status).setHeader("content-type", "application/json").send(text);
-  } catch (e) {
-    res.status(e?.name === "TimeoutError" ? 504 : 502).json({ error: e?.name === "TimeoutError" ? "timeout" : "upstream" });
+    failures.push({ id, status: r.status, detail: String(r.text).slice(0, 240) });
+    console.error("ai provider failed", id, r.status, String(r.text).slice(0, 300));
   }
+  const keyOnly = failures.length && failures.every((f) => f.status === 401 || f.status === 403);
+  if (keyOnly) return res.status(502).json({ error: "server_key", detail: failures[0].detail });
+  if (failures.every((f) => f.status === 429)) return res.status(429).json({ error: "quota" });
+  return res.status(failures.some((f) => f.status === 504) && failures.length === 1 ? 504 : 502).json({ error: failures.some((f) => f.status === 504) && failures.length === 1 ? "timeout" : "busy", detail: failures.map((f) => `${f.id} ${f.status}`).join(", ") });
 }

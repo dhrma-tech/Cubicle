@@ -256,3 +256,16 @@ MIT. See [LICENSE](LICENSE).
 ## Author
 
 Built by **Dharmaraj Aparadh** ([@dhrma-tech](https://github.com/dhrma-tech)).
+
+## Ask AI providers
+
+Ask AI runs through `site/api/chat.js`, so keys stay on the server. Add any of these in Vercel (Settings, Environment Variables) and redeploy. Providers are tried in order. If one is busy, rate limited or rejects its key, the next one answers.
+
+| Variable | Provider | Default model |
+| --- | --- | --- |
+| `GEMINI_API_KEY` | Google Gemini (AI Studio keys, including `AQ.` ones) | `gemini-3.6-flash`, then `gemini-3.5-flash-lite` |
+| `GROQ_API_KEY` | Groq | `llama-3.3-70b-versatile` |
+| `ANTHROPIC_API_KEY` | Anthropic Claude | `claude-haiku-5-5` |
+| `OPENAI_API_KEY` | OpenAI, or any OpenAI-compatible host via `OPENAI_BASE_URL` | `gpt-4.1-mini` |
+
+Optional: `AI_PROVIDERS` (order, default `gemini,groq,anthropic,openai`), `GEMINI_MODEL`, `GROQ_MODEL`, `ANTHROPIC_MODEL`, `OPENAI_MODEL`, `AI_DAILY_LIMIT` (per visitor, default 60). One key is enough. Visitors can also paste their own Gemini key in the panel; it stays in their browser.
