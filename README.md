@@ -17,7 +17,9 @@ Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). DEV Tube nar
 - Save videos to **Liked**, **Watch later** and **Done**, with a progress page, and undo any action
 - Use keyboard shortcuts (`j` / `k` to move, `w` to save, `d` to mark done, `/` to search)
 - Open **Explore** for "What's happening in AI": trending stories from Hacker News, official lab blogs, newsletters, new papers and open-source repos, with save, read and "new since your last visit" markers
-- Open **Pro-Scroll** for a vertical feed of productive YouTube Shorts (AI, coding tips, DSA, systems, math, career, focus) with a daily goal, streak, save and "got it" actions, and a prompt to move on to a full lecture when you finish, and pick a mid-video or uploader thumbnail
+- Open **Pro-Scroll** for a vertical feed of productive YouTube Shorts (AI, coding tips, DSA, systems, math, career, focus) with a daily goal, streak, save and "got it" actions, and a prompt to move on to a full lecture when you finish
+- Open **Ask AI** (Gemini) to get recommendations and playlists built from the catalogue. It asks clarifying questions first, can save playlists, and can add any YouTube link to your own copy of DEV Tube
+- Switch between light and dark themes, and pick a mid-video or uploader thumbnail
 - Export your progress as a file, or download the full dataset and build your own version
 
 ## Who This README Is For
@@ -158,6 +160,27 @@ In the feed, the same channel never appears twice in a row, Shorts you have alre
 
 Only YouTube is supported. Instagram and X have no open feed, their embeds need their own scripts and a login, and they block automated access.
 
+## Ask AI
+
+Ask AI is a chat page powered by Gemini. It never invents videos: it can only call these tools, and every video id is checked against the catalogue before it is shown.
+
+| Tool | What it does |
+|---|---|
+| `ask_user` | Shows 1 to 4 clarifying questions as tappable options (goal, level, hours per week, length, deadline) and waits for the answers |
+| `search_catalogue` | Searches the 6,600+ videos by topic, level, length and freshness, in the browser |
+| `show_playlist` | Shows an ordered playlist card with a Save button |
+| `fetch_youtube` | Reads a pasted YouTube link (title, channel, length) through `api/video.js`, no key needed |
+| `propose_video` | Offers to add that video, with a topic and level. It only joins the catalogue after the user taps Add |
+
+Playlists and added videos are stored in the browser (`localStorage`). Nothing is added for other visitors.
+
+**Gemini key setup.** The site is static, so a key in the browser would be public. Two ways to run it, and both can be on at once:
+
+1. **Shared AI (recommended).** In Vercel, open Settings, Environment Variables and add `GEMINI_API_KEY` (get one free in [Google AI Studio](https://aistudio.google.com/apikey)). The function `api/chat.js` holds the key, only forwards function-calling requests, caps output size, and limits each visitor per day (`AI_DAILY_LIMIT`, default 60 calls). The limit is kept in memory, so it is best effort. Optional: `GEMINI_MODEL` (default `gemini-flash-latest`).
+2. **Bring your own key.** A visitor pastes their own key in the Gemini key box on the page. It is stored only in their browser and is used to call Gemini directly, with its own quota.
+
+The `api/` functions only run on Vercel, not in `vite dev`. Locally, use the paste-your-own-key box.
+
 ## Tech Stack
 
 - **Site:** Vite, React 18, TypeScript (strict), plain CSS, hash routing, no server
@@ -234,7 +257,8 @@ dev-tube/
 │   ├── build_taxonomy.py      generates the syllabus
 │   └── run_all.py             runs everything in order
 ├── site/                Vite + React static site
-│   └── src/                   App, views, components, store, data, styles
+│   ├── api/                   Vercel functions: chat.js (Gemini proxy), video.js (YouTube metadata)
+│   └── src/                   App, views, components, store, data, styles, ai, aipage
 ├── data/
 │   ├── seeds.json             channels, syllabus pages, GitHub lists
 │   └── taxonomy.json          sections and topics (generated)
