@@ -191,7 +191,7 @@ export default function App() {
       <header className="top">
         <div className="top-l">
           <button type="button" className="burger" aria-label="Toggle menu" aria-expanded={isWatch || railOpen ? railOpen : !mini} onClick={toggleRail}><span /><span /><span /></button>
-          <a className="brand" href="#/" aria-label="Cubicle home"><b>Cubicle</b></a>
+          <a className="brand" href="#/" aria-label="Cubicle home"><i className="brand-mark" aria-hidden="true" /><span>Cubicle</span></a>
         </div>
         <form className="search" role="search" onSubmit={(e) => { e.preventDefault(); const v = searchRef.current?.value.trim(); go(v ? `/browse?q=${encodeURIComponent(v)}` : "/browse"); searchRef.current?.blur(); }}>
           <span className="search-in"><input ref={searchRef} type="search" placeholder="Search videos, channels, topics" aria-label="Search videos" defaultValue={p0 === "browse" ? route.q.get("q") ?? "" : ""} key={p0 === "browse" ? route.q.get("q") ?? "" : "x"} /></span>
