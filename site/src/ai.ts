@@ -75,6 +75,7 @@ async function callGemini(body: Record<string, unknown>) {
   const text = await r.text();
   let j: { error?: string | { message?: string }; [k: string]: unknown } | null = null;
   try { j = JSON.parse(text); } catch { /* not JSON */ }
+  const gm = typeof j?.error === "object" ? String(j.error?.message ?? "") : "";
   if (r.ok && j) return j as { candidates?: { content?: Content }[]; promptFeedback?: { blockReason?: string } };
   if (!key) {
     if (r.status === 504) throw new AIError("timeout");
@@ -84,10 +85,10 @@ async function callGemini(body: Record<string, unknown>) {
     if (j.error === "server_key") { let m = ""; try { m = (JSON.parse(String((j as { detail?: string }).detail)) as { error?: { message?: string } }).error?.message ?? ""; } catch { m = String((j as { detail?: string }).detail ?? "").slice(0, 160); } throw new AIError("server_key", m); }
     if (r.status === 429) throw new AIError(j.error === "daily_limit" ? "daily_limit" : "quota");
   } else {
-    if (r.status === 400 || r.status === 403) throw new AIError("bad_key");
+    if (r.status === 401 || r.status === 403 || (r.status === 400 && /api key|api_key/i.test(gm))) throw new AIError("bad_key", gm);
     if (r.status === 429) throw new AIError("quota");
   }
-  throw new AIError("upstream");
+  throw new AIError("upstream", `${r.status}${gm ? " " + gm : ""}`);
 }
 
 const ERR: Record<string, { text: string; key?: boolean }> = {
