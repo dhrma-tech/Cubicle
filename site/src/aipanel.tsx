@@ -52,6 +52,15 @@ function starters(d: Data) {
   return ["What is on this page?", "What should I watch next?", ...STARTERS.slice(0, 1)];
 }
 
+/** Models like to answer in Markdown. Show clean text instead: no asterisks, underscores, hashes or backticks. */
+export const plain = (t: string) => t
+  .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+  .replace(/^(\s*)[*+]\s+/gm, "$1- ")
+  .replace(/\*\*([^*]+)\*\*/g, "$1").replace(/__([^_]+)__/g, "$1")
+  .replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, "$1$2").replace(/(^|[\s(])_([^_\n]+)_(?=[\s).,;:!?]|$)/g, "$1$2")
+  .replace(/`([^`]+)`/g, "$1").replace(/^```\w*$/gm, "")
+  .replace(/\*{2,}/g, "").replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, "$1 ($2)");
+
 export function AIPanel({ data }: { data: Data }) {
   const open = useAIOpen();
   const chat = useChat();
@@ -109,7 +118,7 @@ export function AIPanel({ data }: { data: Data }) {
               {chat.items.map((it, k) => {
                 switch (it.kind) {
                   case "user": return <div key={k} className="ai-msg me"><p>{it.text}</p></div>;
-                  case "text": return <div key={k} className="ai-msg"><span className="ai-mark sm"><Spark size={26} /></span><div className="ai-text">{it.text.split(/\n{2,}/).map((p, j) => <p key={j}>{p}</p>)}</div></div>;
+                  case "text": return <div key={k} className="ai-msg"><span className="ai-mark sm"><Spark size={26} /></span><div className="ai-text">{plain(it.text).split(/\n{2,}/).map((p, j) => <p key={j} className="ai-p">{p}</p>)}</div></div>;
                   case "ask": return <AskCard key={k} item={it} chat={chat} />;
                   case "playlist": return <PlaylistCard key={k} item={it} data={data} chat={chat} />;
                   case "video": return <VideoCard key={k} item={it} data={data} chat={chat} />;

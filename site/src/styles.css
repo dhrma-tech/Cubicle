@@ -1021,3 +1021,5 @@ button.nav { background: none; border: 0; width: 100%; font: inherit; color: inh
 .today-resume{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 12px;text-decoration:none}
 .today-resume a{flex:1;min-width:0;color:inherit;text-decoration:none;padding:2px 0}
 .today-x.sm{position:static;width:26px;height:26px;flex:none}
+
+.ai-p{white-space:pre-line}
