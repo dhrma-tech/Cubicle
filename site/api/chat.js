@@ -1,7 +1,7 @@
 // Vercel function: forwards chat requests to Gemini so the key never reaches the browser.
 // Set GEMINI_API_KEY in Vercel (Settings, Environment Variables). Optional: GEMINI_MODEL, AI_DAILY_LIMIT.
 // The per-visitor limit is kept in memory, so it is best effort: it resets when the function restarts.
-const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.6-flash";
 // AI Studio now issues keys that start with "AQ." as well. Those work on the Gemini API host. Vertex express-mode keys also start
 // with "AQ.", so when the Gemini API refuses one, the same key is tried on the Vertex host.
 const HOSTS = [
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
     signal: AbortSignal.timeout(ms),
   });
   const t0 = Date.now();
-  const thin = { ...payload, generationConfig: { ...payload.generationConfig, thinkingConfig: { thinkingBudget: 0 } } };
+  const thin = { ...payload, generationConfig: { ...payload.generationConfig, thinkingConfig: { thinkingLevel: "low" } } };
   const attempt = async (host, ms) => {
     // thinking off keeps answers fast; if the model rejects that setting, retry with its defaults
     let r = await call(thin, host, ms);
