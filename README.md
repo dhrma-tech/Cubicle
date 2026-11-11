@@ -17,8 +17,6 @@ Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). DEV Tube nar
 - Save videos to **Liked**, **Watch later** and **Done**, with a progress page, and undo any action
 - Use keyboard shortcuts (`j` / `k` to move, `w` to save, `d` to mark done, `/` to search)
 - Open **Explore** for "What's happening in AI": trending stories from Hacker News, official lab blogs, newsletters, new papers and open-source repos, with save, read and "new since your last visit" markers
-- Open **Pro-Scroll** for a vertical feed of productive YouTube Shorts (AI, coding tips, DSA, systems, math, career, focus) with a daily goal, streak, save and "got it" actions, and a prompt to move on to a full lecture when you finish
-- Open **Ask AI** (Gemini) to get recommendations and playlists built from the catalogue. It asks clarifying questions first, can save playlists, and can add any YouTube link to your own copy of DEV Tube
 - Switch between light and dark themes, and pick a mid-video or uploader thumbnail
 - Export your progress as a file, or download the full dataset and build your own version
 
@@ -145,42 +143,6 @@ The Explore page is built from free sources, with no keys:
 
 `pipeline/07_fetch_news.py` writes `site/public/data/news.json`. Run `python pipeline/07_fetch_news.py` to refresh it, then commit the file to redeploy. To refresh automatically every 2 hours, move `docs/news-workflow.yml` to `.github/workflows/news.yml`. Reddit blocks automated access, so it is tried but usually skipped.
 
-## Pro-Scroll: Productive Shorts
-
-Pro-Scroll is a swipeable Shorts feed that stops when you have had enough. Pick a daily goal (5, 10, 20 or 30). A Short counts after 3 seconds on screen. When you reach the goal, the page points you to a full lecture or the syllabus instead of scrolling forever.
-
-No API key is needed. Every YouTube channel has a Shorts-only playlist (the channel id with `UC` replaced by `UUSH`), and its public RSS feed lists the 15 latest Shorts with title, date and views. `pipeline/08_fetch_shorts.py` reads those feeds for about 200 channels (a hand-picked list plus the top channels in the catalogue), then:
-
-1. Drops sponsored, off-topic and entertainment titles, and requires an on-topic title.
-2. Sorts each Short into a track by title keywords.
-3. Scores it: log of views × freshness (1 year half-life), plus a boost for beating the channel's own median.
-4. Keeps at most 8 per channel and writes `site/public/data/shorts.json`.
-
-In the feed, the same channel never appears twice in a row, Shorts you have already seen go to the back, and each visit shuffles the order slightly. Keys: `j` / `k` move, `s` saves, `d` marks "got it", `m` toggles sound, space pauses.
-
-Only YouTube is supported. Instagram and X have no open feed, their embeds need their own scripts and a login, and they block automated access.
-
-## Ask AI
-
-Ask AI is a floating side panel on every page, powered by Gemini. It is closed by default, opens with one tap, and can read the page you are on (visible text, the videos listed, the video you are watching) so you can ask about it. It never invents videos: it can only call these tools, and every video id is checked against the catalogue before it is shown.
-
-| Tool | What it does |
-|---|---|
-| `ask_user` | Shows 1 to 4 clarifying questions as tappable options (goal, level, hours per week, length, deadline) and waits for the answers |
-| `search_catalogue` | Searches the 6,600+ videos by topic, level, length and freshness, in the browser |
-| `show_playlist` | Shows an ordered playlist card with a Save button |
-| `fetch_youtube` | Reads a pasted YouTube link (title, channel, length) through `api/video.js`, no key needed |
-| `propose_video` | Offers to add that video, with a topic and level. It only joins the catalogue after the user taps Add |
-
-Playlists and added videos are stored in the browser (`localStorage`). Nothing is added for other visitors.
-
-**Gemini key setup.** The site is static, so a key in the browser would be public. Two ways to run it, and both can be on at once:
-
-1. **Shared AI (recommended).** In Vercel, open Settings, Environment Variables and add `GEMINI_API_KEY` (get one free in [Google AI Studio](https://aistudio.google.com/apikey)). The function `api/chat.js` holds the key, only forwards function-calling requests, caps output size, and limits each visitor per day (`AI_DAILY_LIMIT`, default 60 calls). The limit is kept in memory, so it is best effort. Optional: `GEMINI_MODEL` (default `gemini-flash-latest`).
-2. **Bring your own key.** A visitor pastes their own key in the Gemini key box on the page. It is stored only in their browser and is used to call Gemini directly, with its own quota.
-
-The `api/` functions only run on Vercel, not in `vite dev`. Locally, use the paste-your-own-key box.
-
 ## Tech Stack
 
 - **Site:** Vite, React 18, TypeScript (strict), plain CSS, hash routing, no server
@@ -253,12 +215,10 @@ dev-tube/
 │   ├── 05b_llm_label.py       optional Claude Haiku labels
 │   ├── 06_score_export.py     scoring, freshness, JSON and data zip
 │   ├── 07_fetch_news.py       Explore page news (free sources)
-│   ├── 08_fetch_shorts.py     Pro-Scroll Shorts (no key)
 │   ├── build_taxonomy.py      generates the syllabus
 │   └── run_all.py             runs everything in order
 ├── site/                Vite + React static site
-│   ├── api/                   Vercel functions: chat.js (Gemini proxy), video.js (YouTube metadata)
-│   └── src/                   App, views, components, store, data, styles, ai, aipage
+│   └── src/                   App, views, components, store, data, styles
 ├── data/
 │   ├── seeds.json             channels, syllabus pages, GitHub lists
 │   └── taxonomy.json          sections and topics (generated)

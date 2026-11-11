@@ -24,7 +24,7 @@ export const STARTERS = [
 ];
 
 /* ---------- Gemini ---------- */
-const MODEL = "gemini-flash-latest";
+const MODEL = "gemini-2.5-flash";
 class AIError extends Error { constructor(public code: string) { super(code); } }
 
 const str = (type: string, description?: string) => ({ type, description });

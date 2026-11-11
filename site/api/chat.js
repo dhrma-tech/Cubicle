@@ -1,7 +1,7 @@
 // Vercel function: forwards chat requests to Gemini so the key never reaches the browser.
 // Set GEMINI_API_KEY in Vercel (Settings, Environment Variables). Optional: GEMINI_MODEL, AI_DAILY_LIMIT.
 // The per-visitor limit is kept in memory, so it is best effort: it resets when the function restarts.
-const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
+const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 const LIMIT = Number(process.env.AI_DAILY_LIMIT || 60);
 const hits = new Map();
 
@@ -47,11 +47,13 @@ export default async function handler(req, res) {
     body: JSON.stringify(p),
     signal: AbortSignal.timeout(50_000),
   });
+  const t0 = Date.now();
   try {
     // thinking off keeps answers fast; if the model rejects that setting, retry with its defaults
     let r = await call({ ...payload, generationConfig: { ...payload.generationConfig, thinkingConfig: { thinkingBudget: 0 } } });
     if (r.status === 400) r = await call(payload);
     const text = await r.text();
+    res.setHeader("x-ai-ms", String(Date.now() - t0));
     if (r.status === 429) return res.status(429).json({ error: "quota" });
     res.status(r.status).setHeader("content-type", "application/json").send(text);
   } catch (e) {
