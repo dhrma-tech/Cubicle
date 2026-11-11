@@ -132,8 +132,8 @@ export default function App() {
     switch (p0) {
       case undefined: body = <Home data={data} q={route.q} />; break;
       case "explore": body = <Explore q={route.q} />; break;
-      case "scroll": body = <Scroll q={route.q} />; break;
-      case "ai": body = <AIPage data={data} />; break;
+      case "scroll": body = <Scroll q={route.q} data={data} />; break;
+      case "ai": body = <AIPage data={data} ask={route.q.get("ask")} />; break;
       case "playlists": body = <Playlists data={data} />; break;
       case "playlist": body = <PlaylistView id={p1 ?? ""} data={data} />; break;
       case "learn": body = <Learn data={data} />; break;

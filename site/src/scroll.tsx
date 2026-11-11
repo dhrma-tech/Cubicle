@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "./components";
+import { Thumb, toast } from "./components";
+import { fmtDur, LEVEL_NAME, type Data } from "./data";
+import { relatedTo, tokens } from "./related";
 import { PillSelect } from "./views";
 import { compact } from "./news";
-import { dayKey, deeperQuery, scrollActions, streakOf, useScrollState, useShortsData, type Short } from "./proscroll";
+import { dayKey, scrollActions, streakOf, useScrollState, useShortsData, type Short } from "./proscroll";
 
 const P: Record<string, string> = {
   save: "M6 4h12v17l-6-4-6 4z",
@@ -43,7 +45,7 @@ function Ring({ n, goal, size = 84 }: { n: number; goal: number; size?: number }
 interface SlideProps {
   s: Short; n: number; active: boolean; near: boolean; hidden: boolean; sound: boolean; auto: boolean; track: string;
   saved: boolean; learned: boolean;
-  onEnd: () => void; onSound: () => void; onSave: () => void; onLearn: () => void; onHide: () => void;
+  hold: boolean; onEnd: () => void; onSound: () => void; onSave: () => void; onLearn: () => void; onHide: () => void; onDeeper: () => void;
   reg: (n: number, el: HTMLElement | null) => void;
 }
 
@@ -58,6 +60,7 @@ function Slide(p: SlideProps) {
   }, []);
 
   useEffect(() => { if (!active) setPaused(false); }, [active]);
+  useEffect(() => { if (active && p.hold) { post("pauseVideo"); setPaused(true); } }, [p.hold, active, post]);
   useEffect(() => { if (active) post(p.sound ? "unMute" : "mute"); }, [p.sound, active, post]);
   useEffect(() => {
     if (!active) return;
@@ -101,7 +104,7 @@ function Slide(p: SlideProps) {
       <div className="sc-acts">
         <button className={"sc-act" + (p.saved ? " on" : "")} onClick={p.onSave} aria-pressed={p.saved} title="Save (s)"><Ic n="save" /><span>{p.saved ? "Saved" : "Save"}</span></button>
         <button className={"sc-act" + (p.learned ? " on" : "")} onClick={p.onLearn} aria-pressed={p.learned} title="Got it (d)"><Ic n="check" /><span>Got it</span></button>
-        <a className="sc-act" href={`#/browse?q=${encodeURIComponent(deeperQuery(s.t))}`} title="Find full lectures on this"><Ic n="deeper" /><span>Go deeper</span></a>
+        <button className="sc-act" onClick={p.onDeeper} title="Related topics and full videos"><Ic n="deeper" /><span>Go deeper</span></button>
         <button className="sc-act" onClick={p.onSound} aria-pressed={p.sound} title="Sound (m)"><Ic n={p.sound ? "sound" : "mute"} /><span>{p.sound ? "Sound on" : "Muted"}</span></button>
         <button className="sc-act" onClick={p.onHide} title={`Hide ${s.c}`}><Ic n="hide" /><span>Hide</span></button>
       </div>
@@ -109,8 +112,51 @@ function Slide(p: SlideProps) {
   );
 }
 
-export function Scroll({ q }: { q: URLSearchParams }) {
-  const { data, error } = useShortsData();
+function Deeper({ s, data, deck, labels, onClose, onJump }: { s: Short; data: Data; deck: Short[]; labels: Record<string, string>; onClose: () => void; onJump: (n: number) => void }) {
+  const rel = useMemo(() => relatedTo(data, s), [data, s]);
+  const more = useMemo(() => {
+    const q = new Set(tokens(s.t));
+    return deck.map((x, n) => ({ x, n, sc: tokens(x.t).filter((t) => q.has(t)).length * 2 + (x.k === s.k ? 1 : 0) }))
+      .filter((r) => r.x.i !== s.i && r.sc >= 2).sort((a, b) => b.sc - a.sc).slice(0, 4);
+  }, [deck, s]);
+  const close = useRef<HTMLButtonElement>(null);
+  useEffect(() => { close.current?.focus(); }, []);
+  return (
+    <div className="sc-sheet-wrap" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <aside className="sc-sheet" role="dialog" aria-modal="true" aria-label="Go deeper">
+        <header>
+          <div><h2>Go deeper</h2><p>{clean(s.t)}</p></div>
+          <button ref={close} className="sc-fold" onClick={onClose} aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+        </header>
+        <section>
+          <h3>Related topics</h3>
+          <div className="sc-topics">{rel.topics.map((n) => <a key={n.id} className="sc-topic" href={`#/n/${n.id}`}><b>{n.title}</b><small>{n.count} videos</small></a>)}</div>
+        </section>
+        <section>
+          <h3>Full videos on this</h3>
+          {rel.videos.length ? (
+            <ul className="sc-rel">{rel.videos.map((v) => (
+              <li key={v.i}>
+                <a href={`#/watch/${v.i}`} className="ai-pl-thumb" aria-label={v.t}><Thumb v={v} /></a>
+                <div><a href={`#/watch/${v.i}`} className="ai-pl-t">{v.t}</a><p>{v.c}{v.d ? `, ${fmtDur(v.d)}` : ""}, {LEVEL_NAME[v.l]}</p></div>
+              </li>
+            ))}</ul>
+          ) : <p className="sc-none">No close match for this one. Try a topic above.</p>}
+        </section>
+        {more.length ? (
+          <section>
+            <h3>More Shorts like this</h3>
+            <ul className="sc-more">{more.map((r) => <li key={r.x.i}><button onClick={() => onJump(r.n)}><span>{clean(r.x.t)}</span><small>{r.x.c}, {labels[r.x.k] ?? r.x.k}</small></button></li>)}</ul>
+          </section>
+        ) : null}
+        <a className="btn btn-primary sc-ask" href={`#/ai?ask=${encodeURIComponent(`I just watched a Short called "${clean(s.t)}" by ${s.c}. Help me learn this properly. Ask me a few questions, then suggest videos from the catalogue.`)}`}>Ask AI to explain this</a>
+      </aside>
+    </div>
+  );
+}
+
+export function Scroll({ q, data }: { q: URLSearchParams; data: Data }) {
+  const { data: shorts, error } = useShortsData();
   const ss = useScrollState();
   const ssRef = useRef(ss); ssRef.current = ss;
   const track = q.get("t") || "all";
@@ -121,17 +167,18 @@ export function Scroll({ q }: { q: URLSearchParams }) {
   const actRef = useRef(0); actRef.current = act;
   const [sound, setSound] = useState(false);
   const [done, setDone] = useState(false);
+  const [deeper, setDeeper] = useState<Short | null>(null);
   const [fold, setFold] = useState(() => { try { return localStorage.getItem("devtube.scroll.fold") === "1"; } catch { return false; } });
   const toggleFold = () => setFold((f) => { const n = !f; try { localStorage.setItem("devtube.scroll.fold", n ? "1" : "0"); } catch { /* private mode */ } return n; });
   const feed = useRef<HTMLDivElement>(null);
   const els = useRef<(HTMLElement | null)[]>([]);
-  const labels = useMemo(() => Object.fromEntries((data?.tracks ?? []).map((t) => [t.id, t.label])), [data]);
+  const labels = useMemo(() => Object.fromEntries((shorts?.tracks ?? []).map((t) => [t.id, t.label])), [shorts]);
 
   // the session deck: ranked score with a little per-visit jitter, unseen first, never two in a row from one channel
   const deck = useMemo<Short[]>(() => {
-    if (!data) return [];
+    if (!shorts) return [];
     const rnd = (id: string) => { let h = 2166136261 ^ seed.current; for (let k = 0; k < id.length; k++) h = Math.imul(h ^ id.charCodeAt(k), 16777619); return (h >>> 0) % 1000 / 1000; };
-    let xs = data.items;
+    let xs = shorts.items;
     if (savedOnly) xs = xs.filter((s) => ssRef.current.saved.includes(s.i));
     else if (track !== "all") xs = xs.filter((s) => s.k === track);
     xs = xs.map((s) => ({ s, r: s.sc * (0.85 + 0.3 * rnd(s.i)) })).sort((a, b) => b.r - a.r).map((x) => x.s);
@@ -144,7 +191,7 @@ export function Scroll({ q }: { q: URLSearchParams }) {
       out.push(pool.splice(k, 1)[0]);
     }
     return out;
-  }, [data, track, savedOnly]);
+  }, [shorts, track, savedOnly]);
 
   useEffect(() => { setAct(0); feed.current?.scrollTo({ top: 0 }); }, [track, savedOnly]);
 
@@ -201,7 +248,7 @@ export function Scroll({ q }: { q: URLSearchParams }) {
         case "s": if (s) save(s); break;
         case "d": if (s) learn(s); break;
         case " ": if (!(t && (t.tagName === "BUTTON" || t.tagName === "A"))) { e.preventDefault(); feed.current?.querySelector<HTMLButtonElement>(".is-active .sc-hit")?.click(); } break;
-        case "Escape": setDone(false); break;
+        case "Escape": setDone(false); setDeeper(null); break;
       }
     };
     addEventListener("keydown", onKey);
@@ -212,13 +259,13 @@ export function Scroll({ q }: { q: URLSearchParams }) {
   const streak = streakOf(ss.met);
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: 0 };
-    for (const s of data?.items ?? []) { if (ss.muted.includes(s.h)) continue; c.all++; c[s.k] = (c[s.k] || 0) + 1; }
+    for (const s of shorts?.items ?? []) { if (ss.muted.includes(s.h)) continue; c.all++; c[s.k] = (c[s.k] || 0) + 1; }
     return c;
-  }, [data, ss.muted]);
-  const trackLinks = (data?.tracks ?? []).filter((t) => counts[t.id]);
+  }, [shorts, ss.muted]);
+  const trackLinks = (shorts?.tracks ?? []).filter((t) => counts[t.id]);
 
   if (error) return <div className="page"><div className="empty"><h2>Could not load Pro-Scroll</h2><p>{error}. Check your connection and reload the page.</p></div></div>;
-  if (!data) return <div className="page"><p className="loading" role="status">Loading Shorts…</p></div>;
+  if (!shorts) return <div className="page"><p className="loading" role="status">Loading Shorts…</p></div>;
 
   const chev = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={fold ? "M9 6l6 6-6 6" : "M15 6l-6 6 6 6"} /></svg>;
   const side = fold ? (
@@ -266,7 +313,7 @@ export function Scroll({ q }: { q: URLSearchParams }) {
             {deck.map((s, n) => (
               <Slide key={s.i} s={s} n={n} active={n === act} near={Math.abs(n - act) <= 3} hidden={ss.muted.includes(s.h)} sound={sound} auto={ss.auto}
                 track={labels[s.k] ?? s.k} saved={ss.saved.includes(s.i)} learned={ss.learned.includes(s.i)}
-                onEnd={() => goTo(actRef.current + 1, 1)} onSound={() => setSound((v) => !v)} onSave={() => save(s)} onLearn={() => learn(s)} onHide={() => hide(s, n)}
+                onEnd={() => goTo(actRef.current + 1, 1)} onSound={() => setSound((v) => !v)} onSave={() => save(s)} onLearn={() => learn(s)} onHide={() => hide(s, n)} onDeeper={() => setDeeper(s)} hold={deeper?.i === s.i}
                 reg={(i, el) => { els.current[i] = el; }} />
             ))}
             <section className="sc-slide sc-end" data-n={deck.length} ref={(el) => { els.current[deck.length] = el; }}>
@@ -284,6 +331,7 @@ export function Scroll({ q }: { q: URLSearchParams }) {
           </div>
         )}
       </div>
+      {deeper ? <Deeper s={deeper} data={data} deck={deck} labels={labels} onClose={() => setDeeper(null)} onJump={(n) => { setDeeper(null); goTo(n); }} /> : null}
       {done ? (
         <div className="sc-done" role="dialog" aria-modal="true" aria-label="Daily goal reached" onClick={(e) => { if (e.target === e.currentTarget) setDone(false); }}>
           <div className="sc-done-card">

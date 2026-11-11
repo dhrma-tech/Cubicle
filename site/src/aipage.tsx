@@ -142,8 +142,10 @@ function Composer({ chat, big }: { chat: Chat; big?: boolean }) {
 }
 
 /* ---------- the page ---------- */
-export function AIPage({ data }: { data: Data }) {
+export function AIPage({ data, ask }: { data: Data; ask?: string | null }) {
   const chat = useChat();
+  const asked = useRef(false);
+  useEffect(() => { if (ask && !asked.current) { asked.current = true; history.replaceState(null, "", "#/ai"); void chat.send(ask); } }, [ask, chat]);
   const u = useUserData();
   const [keyOpen, setKeyOpen] = useState(false);
   const end = useRef<HTMLDivElement>(null);
