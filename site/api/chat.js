@@ -14,6 +14,9 @@ function allowed(ip) {
   return { ok: n <= LIMIT, left: Math.max(0, LIMIT - n) };
 }
 
+// Gemini with tools can take a while; the default 10 s limit would cut it off.
+export const config = { maxDuration: 60 };
+
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") return res.status(405).json({ error: "method" });
@@ -38,16 +41,20 @@ export default async function handler(req, res) {
     toolConfig: tools.length ? { functionCallingConfig: { mode: "AUTO" } } : undefined,
     generationConfig: { temperature: 0.4, maxOutputTokens: Math.min(Number(body.generationConfig?.maxOutputTokens) || 2048, 3000) },
   };
+  const call = (p) => fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-goog-api-key": key },
+    body: JSON.stringify(p),
+    signal: AbortSignal.timeout(50_000),
+  });
   try {
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify(payload),
-    });
+    // thinking off keeps answers fast; if the model rejects that setting, retry with its defaults
+    let r = await call({ ...payload, generationConfig: { ...payload.generationConfig, thinkingConfig: { thinkingBudget: 0 } } });
+    if (r.status === 400) r = await call(payload);
     const text = await r.text();
     if (r.status === 429) return res.status(429).json({ error: "quota" });
     res.status(r.status).setHeader("content-type", "application/json").send(text);
-  } catch {
-    res.status(502).json({ error: "upstream" });
+  } catch (e) {
+    res.status(e?.name === "TimeoutError" ? 504 : 502).json({ error: e?.name === "TimeoutError" ? "timeout" : "upstream" });
   }
 }

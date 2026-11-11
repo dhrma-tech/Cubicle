@@ -69,15 +69,18 @@ async function callGemini(body: Record<string, unknown>) {
     r = await fetch(key ? `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent` : "/api/chat", {
       method: "POST", headers: { "content-type": "application/json", ...(key ? { "x-goog-api-key": key } : {}) },
       body: JSON.stringify(key ? { ...body, toolConfig: { functionCallingConfig: { mode: "AUTO" } } } : body),
+      signal: AbortSignal.timeout(58_000),
     });
-  } catch { throw new AIError("network"); }
+  } catch (e) { throw new AIError((e as Error)?.name === "TimeoutError" ? "timeout" : "network"); }
   const text = await r.text();
   let j: { error?: string | { message?: string }; [k: string]: unknown } | null = null;
   try { j = JSON.parse(text); } catch { /* not JSON */ }
   if (r.ok && j) return j as { candidates?: { content?: Content }[]; promptFeedback?: { blockReason?: string } };
   if (!key) {
+    if (r.status === 504) throw new AIError("timeout");
     if (r.status === 404 || r.status === 405 || !j) throw new AIError("no_proxy");
     if (r.status === 503) throw new AIError("not_configured");
+    if (r.status === 504 || j.error === "timeout") throw new AIError("timeout");
     if (r.status === 429) throw new AIError(j.error === "daily_limit" ? "daily_limit" : "quota");
   } else {
     if (r.status === 400 || r.status === 403) throw new AIError("bad_key");
@@ -92,6 +95,7 @@ const ERR: Record<string, { text: string; key?: boolean }> = {
   no_proxy: { text: "The shared AI is not available here (it only runs on the deployed site). Add your own free Gemini key to use it.", key: true },
   bad_key: { text: "Gemini rejected that key. Check it in AI Studio and paste it again.", key: true },
   quota: { text: "Gemini is rate limited right now. Wait a minute and try again, or add your own key for a separate limit.", key: true },
+  timeout: { text: "The AI took too long to answer. Try again, or ask something shorter." },
   network: { text: "Could not reach the AI. Check your connection and try again." },
   blocked: { text: "Gemini declined to answer that. Try rewording it." },
   empty: { text: "Gemini returned nothing. Try again." },
