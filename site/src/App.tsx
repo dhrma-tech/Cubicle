@@ -4,6 +4,7 @@ import { useStore, actions } from "./store";
 import { go, Toaster } from "./components";
 import { Explore } from "./explore";
 import { Scroll } from "./scroll";
+import { AIPage, PlaylistView, Playlists } from "./aipage";
 import { About, Browse, Home, Learn, NodePage, NotFound, Prep, ProgressPage, Saved, SectionPage, SettingsPage, Watch } from "./views";
 
 function parse() {
@@ -39,6 +40,8 @@ const ICONS: Record<string, string> = {
   history: "M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 8v5l3 2",
   progress: "M4 12l5 5L20 6",
   settings: "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2",
+  ai: "M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18",
+  playlists: "M4 6h12M4 11h12M4 16h7M18 13v6M15 16h6",
   scroll: "M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM10 17h4M12 7v6M9.5 10.5L12 13l2.5-2.5",
   explore: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15.5 8.5l-2 5-5 2 2-5z",
   about: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01",
@@ -49,7 +52,7 @@ const Ico = ({ n }: { n: string }) => (
 
 const SHORTCUTS: [string, string][] = [
   ["/", "Search"], ["j / k", "Next / previous video"], ["Enter", "Open the selected video"], ["l", "Like the selected video"],
-  ["w", "Add to watch later"], ["d", "Mark done"], ["g then h", "Go home"], ["g then e", "Go to Explore"], ["g then r", "Go to Pro-Scroll"], ["g then s", "Go to the syllabus"], ["g then p", "Go to interview prep"], ["?", "Show this list"],
+  ["w", "Add to watch later"], ["d", "Mark done"], ["g then h", "Go home"], ["g then e", "Go to Explore"], ["g then r", "Go to Pro-Scroll"], ["g then a", "Ask AI"], ["g then s", "Go to the syllabus"], ["g then p", "Go to interview prep"], ["?", "Show this list"],
 ];
 
 export default function App() {
@@ -88,7 +91,7 @@ export default function App() {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (gPending.current) {
         gPending.current = false;
-        const m: Record<string, string> = { h: "/", e: "/explore", r: "/scroll", s: "/learn", p: "/prep", l: "/liked" };
+        const m: Record<string, string> = { h: "/", e: "/explore", r: "/scroll", a: "/ai", s: "/learn", p: "/prep", l: "/liked" };
         if (m[e.key]) { go(m[e.key]); e.preventDefault(); return; }
       }
       const r = rows(); const cur = r[sel.current]; const id = cur?.dataset.id;
@@ -130,6 +133,9 @@ export default function App() {
       case undefined: body = <Home data={data} q={route.q} />; break;
       case "explore": body = <Explore q={route.q} />; break;
       case "scroll": body = <Scroll q={route.q} />; break;
+      case "ai": body = <AIPage data={data} />; break;
+      case "playlists": body = <Playlists data={data} />; break;
+      case "playlist": body = <PlaylistView id={p1 ?? ""} data={data} />; break;
       case "learn": body = <Learn data={data} />; break;
       case "s": body = <SectionPage id={p1} q={route.q} data={data} />; break;
       case "n": body = <NodePage id={p1} q={route.q} data={data} />; break;
@@ -165,6 +171,7 @@ export default function App() {
         {link("#/", "Home", "home", "home")}
         {link("#/explore", "Explore", "explore", "explore")}
         {link("#/scroll", "Pro-Scroll", "scroll", "scroll", undefined, active === "scroll", "Scroll")}
+        {link("#/ai", "Ask AI", "ai", "ai")}
         {link("#/learn", "Syllabus", "learn", "learn")}
         {link("#/prep", "Interview prep", "prep", "prep", undefined, active === "prep", "Prep")}
         {link("#/browse", "Most recommended", "browse", "best", undefined, active === "browse" && route.q.get("dur") !== "long", "Top")}
@@ -172,6 +179,7 @@ export default function App() {
         <hr />
         {link("#/liked", "Liked", "liked", "liked", st.liked.length)}
         {link("#/later", "Watch later", "later", "later", st.later.length)}
+        {link("#/playlists", "Playlists", "playlists", "playlists", undefined, active === "playlists" || active === "playlist", "Lists")}
         {link("#/history", "History", "history", "history")}
         {link("#/progress", "Progress", "progress", "progress", Object.keys(st.done).length)}
         {data ? (

@@ -104,6 +104,7 @@ export function VideoRow({ v, data, showNode = true }: { v: Video; data: Data; s
         <p className="row-meta">
           <span>{v.c}</span>
           <LevelTag v={v} />
+          {v.u ? <span className="yours">Yours</span> : null}
           {showNode && node ? <a className="node-link" href={`#/n/${v.n}`}>{node.title}</a> : null}
           {v.o ? <span className="tag tag-old" title={freshText(v)}>May be outdated</span> : null}
           {seen && !done ? <span className="seen">Watched</span> : null}
@@ -227,8 +228,9 @@ export function YtCard({ v, data, home }: { v: Video; data: Data; home?: boolean
           <h3 className="yt-title"><a href={`#/watch/${v.i}`} title={v.t}>{v.t}</a></h3>
           <a className="yt-channel" href={`#/browse?ch=${encodeURIComponent(v.c)}`}>{v.c}</a>
           <p className="yt-meta"><span className="mini-dots" aria-hidden="true">{[0, 1, 2].map((k) => <i key={k} className={k < Math.min(3, Math.ceil(Math.log2(v.hn + v.sr * 3 + 1) / 1.7)) ? "on" : ""} />)}</span><span>{parts.join(" · ")}</span></p>
-          {v.o || seen || node ? (
+          {v.o || seen || node || v.u ? (
             <p className="yt-tags">
+              {v.u ? <span className="yours">Yours</span> : null}
               {node ? <a className="node-link" href={`#/n/${v.n}`}>{node.title}</a> : null}
               {v.o ? <span className="tag tag-old" title={freshText(v)}>May be outdated</span> : null}
               {seen && !done ? <span className="seen">Watched</span> : null}

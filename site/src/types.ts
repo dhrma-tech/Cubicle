@@ -22,6 +22,7 @@ export interface Video {
   d?: number; // seconds
   p?: string; // published date
   w?: [number, string]; // [HN comment id, snippet]
+  u?: 1; // added by this user on the AI page (stored only in their browser)
 }
 
 export interface TNode { id: string; title: string; shelf: string; level: string; count: number }
