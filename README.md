@@ -16,6 +16,7 @@ Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). DEV Tube nar
 - Spot **outdated** tutorials: every video has a freshness bar, and old tool-specific videos are tagged "May be outdated"
 - Save videos to **Liked**, **Watch later** and **Done**, with a progress page, and undo any action
 - Use keyboard shortcuts (`j` / `k` to move, `w` to save, `d` to mark done, `/` to search)
+- Open **Explore** for "What's happening in AI": trending stories from Hacker News, official lab blogs, newsletters, new papers and open-source repos, with save, read and "new since your last visit" markers
 - Switch between light and dark themes, and pick a mid-video or uploader thumbnail
 - Export your progress as a file, or download the full dataset and build your own version
 
@@ -34,8 +35,8 @@ Install Node.js **20 or newer** from [nodejs.org](https://nodejs.org).
 
 ### Step 2: Get the project
 ```bash
-git clone https://github.com/dhrma-tech/Dev-Tube.git
-cd Dev-Tube/site
+git clone https://github.com/dhrma-tech/dev-tube.git
+cd dev-tube/site
 ```
 
 ### Step 3: Install and start
@@ -128,6 +129,20 @@ The finished static site is in `site/dist`.
 6. **Freshness.** Freshness = 0.5 ^ (age ÷ half-life). Half-life is 10 years for evergreen topics, 3 years for semi-fresh and 1 year for fast-moving ones. A non-evergreen video below 0.4 is tagged "May be outdated".
 7. **Export.** Up to 150 videos per topic are written to JSON for the site, plus a downloadable data zip with a `DATA.md` file.
 
+## Explore: What's Happening In AI
+
+The Explore page is built from free sources, with no keys:
+
+| Source | What it adds |
+|---|---|
+| Hacker News (Algolia API) | AI stories from the last 3 days, ranked by points and comments |
+| Lab blogs and newsletters | OpenAI, Anthropic, Google DeepMind, Google AI, Google Research, Microsoft Research, NVIDIA, Hugging Face, Simon Willison, Import AI, Latent Space |
+| Hugging Face daily papers | Most upvoted new papers |
+| GitHub search | New AI repos created this week, ranked by stars |
+| Lobsters | AI and ML tags |
+
+`pipeline/07_fetch_news.py` writes `site/public/data/news.json`. Run `python pipeline/07_fetch_news.py` to refresh it, then commit the file to redeploy. To refresh automatically every 2 hours, move `docs/news-workflow.yml` to `.github/workflows/news.yml`. Reddit blocks automated access, so it is tried but usually skipped.
+
 ## Tech Stack
 
 - **Site:** Vite, React 18, TypeScript (strict), plain CSS, hash routing, no server
@@ -189,7 +204,7 @@ A finished single-purpose static site. The catalogue depends on the data you bui
 ## Folder Structure
 
 ```text
-Dev-Tube/
+dev-tube/
 ├── pipeline/            Python data pipeline
 │   ├── 01_extract_hn.py       read Hacker News archive, extract YouTube links
 │   ├── 02_extract_sources.py  read GitHub lists, syllabi, channels
@@ -199,6 +214,7 @@ Dev-Tube/
 │   ├── 05_classify.py         rule based topic and level
 │   ├── 05b_llm_label.py       optional Claude Haiku labels
 │   ├── 06_score_export.py     scoring, freshness, JSON and data zip
+│   ├── 07_fetch_news.py       Explore page news (free sources)
 │   ├── build_taxonomy.py      generates the syllabus
 │   └── run_all.py             runs everything in order
 ├── site/                Vite + React static site

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useData } from "./data";
 import { useStore, actions } from "./store";
 import { go, Toaster } from "./components";
+import { Explore } from "./explore";
 import { About, Browse, Home, Learn, NodePage, NotFound, Prep, ProgressPage, Saved, SectionPage, SettingsPage, Watch } from "./views";
 
 function parse() {
@@ -37,6 +38,7 @@ const ICONS: Record<string, string> = {
   history: "M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 8v5l3 2",
   progress: "M4 12l5 5L20 6",
   settings: "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2",
+  explore: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15.5 8.5l-2 5-5 2 2-5z",
   about: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01",
 };
 const Ico = ({ n }: { n: string }) => (
@@ -45,7 +47,7 @@ const Ico = ({ n }: { n: string }) => (
 
 const SHORTCUTS: [string, string][] = [
   ["/", "Search"], ["j / k", "Next / previous video"], ["Enter", "Open the selected video"], ["l", "Like the selected video"],
-  ["w", "Add to watch later"], ["d", "Mark done"], ["g then h", "Go home"], ["g then s", "Go to the syllabus"], ["g then p", "Go to interview prep"], ["?", "Show this list"],
+  ["w", "Add to watch later"], ["d", "Mark done"], ["g then h", "Go home"], ["g then e", "Go to Explore"], ["g then s", "Go to the syllabus"], ["g then p", "Go to interview prep"], ["?", "Show this list"],
 ];
 
 export default function App() {
@@ -84,7 +86,7 @@ export default function App() {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (gPending.current) {
         gPending.current = false;
-        const m: Record<string, string> = { h: "/", s: "/learn", p: "/prep", l: "/liked" };
+        const m: Record<string, string> = { h: "/", e: "/explore", s: "/learn", p: "/prep", l: "/liked" };
         if (m[e.key]) { go(m[e.key]); e.preventDefault(); return; }
       }
       const r = rows(); const cur = r[sel.current]; const id = cur?.dataset.id;
@@ -124,6 +126,7 @@ export default function App() {
   else {
     switch (p0) {
       case undefined: body = <Home data={data} q={route.q} />; break;
+      case "explore": body = <Explore q={route.q} />; break;
       case "learn": body = <Learn data={data} />; break;
       case "s": body = <SectionPage id={p1} q={route.q} data={data} />; break;
       case "n": body = <NodePage id={p1} q={route.q} data={data} />; break;
@@ -157,6 +160,7 @@ export default function App() {
 
       <nav className="rail" aria-label="Main">
         {link("#/", "Home", "home", "home")}
+        {link("#/explore", "Explore", "explore", "explore")}
         {link("#/learn", "Syllabus", "learn", "learn")}
         {link("#/prep", "Interview prep", "prep", "prep", undefined, active === "prep", "Prep")}
         {link("#/browse", "Most recommended", "browse", "best", undefined, active === "browse" && route.q.get("dur") !== "long", "Top")}

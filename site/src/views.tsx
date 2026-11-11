@@ -37,7 +37,7 @@ function PageHead({ title, sub, children }: { title: string; sub?: string; child
 }
 
 /* ---------- pill dropdown (rounded, replaces the native select popup) ---------- */
-function PillSelect({ label, value, options, onChange }: { label: string; value: string; options: [string, string][]; onChange: (v: string) => void }) {
+export function PillSelect({ label, value, options, onChange }: { label: string; value: string; options: [string, string][]; onChange: (v: string) => void }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
