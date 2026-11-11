@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { openAI } from "./aistate";
 import { fmtDur, type Data } from "./data";
 import { actions, useStore } from "./store";
 import { Thumb, toast } from "./components";
-import { addProposed, STARTERS, useChat, type Answer, type Chat, type Item, type Question } from "./ai";
+import { addProposed, type Answer, type Chat, type Item, type Question } from "./ai";
 import { geminiKey, userActions, useUserData } from "./userdata";
 import { LEVEL_NAME } from "./data";
 
-const Spark = ({ size = 22 }: { size?: number }) => (
+export const Spark = ({ size = 22 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18" /></svg>
 );
 const hours = (secs: number) => (secs >= 3600 ? `${Math.floor(secs / 3600)} h ${Math.round((secs % 3600) / 60)} min` : `${Math.max(1, Math.round(secs / 60))} min`);
 const total = (ids: string[], data: Data) => ids.reduce((n, id) => n + (data.byId.get(id)?.d ?? 0), 0);
 
 /* ---------- cards ---------- */
-function AskCard({ item, chat }: { item: Extract<Item, { kind: "ask" }>; chat: Chat }) {
+export function AskCard({ item, chat }: { item: Extract<Item, { kind: "ask" }>; chat: Chat }) {
   const [sel, setSel] = useState<Record<number, string[]>>({});
   const [other, setOther] = useState<Record<number, string>>({});
   const done = !!item.answered;
@@ -46,7 +47,7 @@ function AskCard({ item, chat }: { item: Extract<Item, { kind: "ask" }>; chat: C
   );
 }
 
-function PlaylistCard({ item, data, chat }: { item: Extract<Item, { kind: "playlist" }>; data: Data; chat: Chat }) {
+export function PlaylistCard({ item, data, chat }: { item: Extract<Item, { kind: "playlist" }>; data: Data; chat: Chat }) {
   const secs = total(item.ids, data);
   const save = () => {
     const id = userActions.savePlaylist({ title: item.title, desc: item.desc, ids: item.ids, notes: item.notes });
@@ -82,7 +83,7 @@ function PlaylistCard({ item, data, chat }: { item: Extract<Item, { kind: "playl
   );
 }
 
-function VideoCard({ item, data, chat }: { item: Extract<Item, { kind: "video" }>; data: Data; chat: Chat }) {
+export function VideoCard({ item, data, chat }: { item: Extract<Item, { kind: "video" }>; data: Data; chat: Chat }) {
   const node = data.nodes.get(item.node);
   return (
     <div className="ai-card ai-vid">
@@ -106,7 +107,7 @@ function VideoCard({ item, data, chat }: { item: Extract<Item, { kind: "video" }
   );
 }
 
-function KeyPanel({ onClose }: { onClose: () => void }) {
+export function KeyPanel({ onClose }: { onClose: () => void }) {
   const u = useUserData();
   const [v, setV] = useState("");
   return (
@@ -123,84 +124,19 @@ function KeyPanel({ onClose }: { onClose: () => void }) {
 }
 
 /* ---------- composer ---------- */
-function Composer({ chat, big }: { chat: Chat; big?: boolean }) {
+export function Composer({ chat, big, placeholder }: { chat: Chat; big?: boolean; placeholder?: string }) {
   const [text, setText] = useState("");
   const ta = useRef<HTMLTextAreaElement>(null);
   useEffect(() => { const el = ta.current; if (el) { el.style.height = "auto"; el.style.height = Math.min(el.scrollHeight, 200) + "px"; } }, [text]);
-  useEffect(() => { ta.current?.focus(); }, []);
   const submit = () => { if (!text.trim() || chat.busy) return; const t = text; setText(""); void chat.send(t); };
   return (
     <div className={"ai-compose" + (big ? " big" : "")}>
-      <textarea ref={ta} rows={1} value={text} placeholder={big ? "Tell me your goal, or paste a YouTube link" : "Reply"} aria-label="Message"
+      <textarea ref={ta} rows={1} value={text} placeholder={placeholder ?? (big ? "Tell me your goal, or paste a YouTube link" : "Reply")} aria-label="Message"
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); submit(); } }} />
       <button className="ai-send" onClick={submit} disabled={!text.trim() || chat.busy} aria-label="Send">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
       </button>
-    </div>
-  );
-}
-
-/* ---------- the page ---------- */
-export function AIPage({ data, ask }: { data: Data; ask?: string | null }) {
-  const chat = useChat();
-  const asked = useRef(false);
-  useEffect(() => { if (ask && !asked.current) { asked.current = true; history.replaceState(null, "", "#/ai"); void chat.send(ask); } }, [ask, chat]);
-  const u = useUserData();
-  const [keyOpen, setKeyOpen] = useState(false);
-  const end = useRef<HTMLDivElement>(null);
-  const empty = chat.items.length === 0;
-  useEffect(() => { end.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "end" }); }, [chat.items.length, chat.busy]);
-  void geminiKey;
-
-  return (
-    <div className={"ai" + (empty ? " is-empty" : "")}>
-      <div className="ai-bar">
-        <span className="ai-who"><Spark size={18} />Ask AI</span>
-        <div>
-          {!empty ? <button className="ai-ghost" onClick={() => chat.reset()} disabled={chat.busy}>New chat</button> : null}
-          <a className="ai-ghost" href="#/playlists">Playlists{u.playlists.length ? ` (${u.playlists.length})` : ""}</a>
-          <button className="ai-ghost" onClick={() => setKeyOpen((o) => !o)} aria-expanded={keyOpen}>{u.key ? "Your key" : "Gemini key"}</button>
-        </div>
-      </div>
-      {keyOpen ? <KeyPanel onClose={() => setKeyOpen(false)} /> : null}
-
-      <div className="ai-scroll">
-        {empty ? (
-          <div className="ai-hero">
-            <span className="ai-mark"><Spark size={30} /></span>
-            <h1>What do you want to learn?</h1>
-            <p>Tell me your goal. I will ask a few questions, then build a playlist from the DEV Tube catalogue. I can also add a YouTube video for you.</p>
-            <Composer chat={chat} big />
-            <div className="ai-starters">{STARTERS.map((s) => <button key={s} onClick={() => void chat.send(s)}>{s}</button>)}</div>
-          </div>
-        ) : (
-          <div className="ai-col" role="log" aria-live="polite">
-            {chat.items.map((it, k) => {
-              switch (it.kind) {
-                case "user": return <div key={k} className="ai-msg me"><p>{it.text}</p></div>;
-                case "text": return <div key={k} className="ai-msg"><span className="ai-mark sm"><Spark size={16} /></span><div className="ai-text">{it.text.split(/\n{2,}/).map((p, j) => <p key={j}>{p}</p>)}</div></div>;
-                case "ask": return <AskCard key={k} item={it} chat={chat} />;
-                case "playlist": return <PlaylistCard key={k} item={it} data={data} chat={chat} />;
-                case "video": return <VideoCard key={k} item={it} data={data} chat={chat} />;
-                case "error": return (
-                  <div key={k} className="ai-error" role="alert"><p>{it.text}</p>
-                    <div className="ai-row">{it.key ? <button className="btn" onClick={() => setKeyOpen(true)}>Add my key</button> : null}{it.retry ? <button className="btn" onClick={() => void chat.retry()}>Try again</button> : null}</div>
-                  </div>
-                );
-              }
-            })}
-            {chat.busy ? <div className="ai-status" role="status"><i /><i /><i /><span>{chat.status}</span></div> : null}
-            <div ref={end} />
-          </div>
-        )}
-      </div>
-
-      {!empty ? (
-        <div className="ai-foot">
-          <div className="ai-col"><Composer chat={chat} /><p className="ai-fine">AI can be wrong. Videos come only from the DEV Tube catalogue or links you add.</p></div>
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -211,7 +147,7 @@ export function Playlists({ data }: { data: Data }) {
   return (
     <div className="page">
       <header className="page-head"><div><h1>Playlists</h1><p className="sub">Playlists you saved from Ask AI. They are stored only in this browser.</p></div></header>
-      <p><a className="btn btn-primary" href="#/ai">Create one with AI</a></p>
+      <p><button className="btn btn-primary" onClick={() => openAI("Build me a playlist. Ask me a few questions first.")}>Create one with AI</button></p>
       {u.playlists.length === 0 ? <div className="empty"><h2>No playlists yet</h2><p>Ask the AI for a learning plan and save it. It will show up here.</p></div> : (
         <div className="pl-grid">
           {u.playlists.map((p) => {
@@ -257,7 +193,7 @@ export function PlaylistView({ id, data }: { id: string; data: Data }) {
       </div></header>
       <div className="ai-row" style={{ marginBottom: 18 }}>
         {vids[0] ? <a className="btn btn-primary" href={`#/watch/${(vids.find((v) => !st.done[v.i]) ?? vids[0]).i}`}>{done ? "Continue" : "Start"}</a> : null}
-        <a className="btn" href="#/ai">Ask AI to change it</a>
+        <button className="btn" onClick={() => openAI(`Change my playlist "${p.title}". Ask me what to adjust.`)}>Ask AI to change it</button>
         <button className="btn" onClick={() => { userActions.deletePlaylist(p.id); toast("Playlist deleted"); location.hash = "#/playlists"; }}>Delete</button>
       </div>
       <ol className="pl-list">

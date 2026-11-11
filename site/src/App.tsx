@@ -4,7 +4,9 @@ import { useStore, actions } from "./store";
 import { go, Toaster } from "./components";
 import { Explore } from "./explore";
 import { Scroll } from "./scroll";
-import { AIPage, PlaylistView, Playlists } from "./aipage";
+import { PlaylistView, Playlists } from "./aipage";
+import { AIPanel } from "./aipanel";
+import { closeAI, openAI, toggleAI, useAIOpen } from "./aistate";
 import { About, Browse, Home, Learn, NodePage, NotFound, Prep, ProgressPage, Saved, SectionPage, SettingsPage, Watch } from "./views";
 
 function parse() {
@@ -91,14 +93,15 @@ export default function App() {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (gPending.current) {
         gPending.current = false;
-        const m: Record<string, string> = { h: "/", e: "/explore", r: "/scroll", a: "/ai", s: "/learn", p: "/prep", l: "/liked" };
+        const m: Record<string, string> = { h: "/", e: "/explore", r: "/scroll", s: "/learn", p: "/prep", l: "/liked" };
+        if (e.key === "a") { toggleAI(); e.preventDefault(); return; }
         if (m[e.key]) { go(m[e.key]); e.preventDefault(); return; }
       }
       const r = rows(); const cur = r[sel.current]; const id = cur?.dataset.id;
       switch (e.key) {
         case "/": e.preventDefault(); searchRef.current?.focus(); break;
         case "?": setHelp((h) => !h); break;
-        case "Escape": setHelp(false); setRailOpen(false); break;
+        case "Escape": setHelp(false); setRailOpen(false); closeAI(); break;
         case "g": gPending.current = true; setTimeout(() => { gPending.current = false; }, 900); break;
         case "j": select(sel.current + 1); break;
         case "k": select(sel.current - 1); break;
@@ -112,9 +115,11 @@ export default function App() {
     return () => removeEventListener("keydown", onKey);
   }, [rows, select]);
 
+  const aiOpen = useAIOpen();
+  useEffect(() => { if (route.path[0] === "ai") { openAI(route.q.get("ask") ?? undefined); history.replaceState(null, "", "#/"); dispatchEvent(new HashChangeEvent("hashchange")); } }, [route]);   // old #/ai links
   const [p0, p1] = route.path;
   const active = p0 || "home";
-  const isWatch = p0 === "watch" || p0 === "scroll" || p0 === "ai"; // immersive pages: the sidebar is a hidden drawer, like YouTube's watch page
+  const isWatch = p0 === "watch" || p0 === "scroll"; // immersive pages: the sidebar is a hidden drawer, like YouTube's watch page
   const toggleRail = () => {
     if (isWatch || matchMedia("(max-width: 860px)").matches) { setRailOpen((o) => !o); return; }
     setMini((m) => { const n = !m; try { localStorage.setItem("devtube.rail", n ? "mini" : "full"); } catch { /* private mode */ } return n; });
@@ -133,7 +138,6 @@ export default function App() {
       case undefined: body = <Home data={data} q={route.q} />; break;
       case "explore": body = <Explore q={route.q} />; break;
       case "scroll": body = <Scroll q={route.q} data={data} />; break;
-      case "ai": body = <AIPage data={data} ask={route.q.get("ask")} />; break;
       case "playlists": body = <Playlists data={data} />; break;
       case "playlist": body = <PlaylistView id={p1 ?? ""} data={data} />; break;
       case "learn": body = <Learn data={data} />; break;
@@ -153,7 +157,7 @@ export default function App() {
   }
 
   return (
-    <div className={"shell" + (railOpen ? " rail-open" : "") + (isWatch ? " drawer" : mini ? " mini" : "")}>
+    <div className={"shell" + (railOpen ? " rail-open" : "") + (aiOpen ? " ai-open" : "") + (isWatch ? " drawer" : mini ? " mini" : "")}>
       <a className="skip" href="#main" onClick={(e) => { e.preventDefault(); document.getElementById("main")?.focus(); }}>Skip to content</a>
       <header className="top">
         <div className="top-l">
@@ -164,14 +168,14 @@ export default function App() {
           <span className="search-in"><input ref={searchRef} type="search" placeholder="Search videos, channels, topics" aria-label="Search videos" defaultValue={p0 === "browse" ? route.q.get("q") ?? "" : ""} key={p0 === "browse" ? route.q.get("q") ?? "" : "x"} /></span>
           <button type="submit" className="search-btn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4.2-4.2" /></svg></button>
         </form>
-        <div className="top-r"><a className="ask-btn" href="#/ai" aria-label="Ask AI" title="Ask AI (g a)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M11 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 3v4M17 5h4M5 17v4M3 19h4" /></svg></a></div>
+        <div className="top-r"><button type="button" className="ask-btn" onClick={toggleAI} aria-label="Ask AI" aria-expanded={aiOpen} title="Ask AI (g a)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M11 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 3v4M17 5h4M5 17v4M3 19h4" /></svg></button></div>
       </header>
 
       <nav className="rail" aria-label="Main">
         {link("#/", "Home", "home", "home")}
         {link("#/explore", "Explore", "explore", "explore")}
         {link("#/scroll", "Pro-Scroll", "scroll", "scroll", undefined, active === "scroll", "Scroll")}
-        {link("#/ai", "Ask AI", "ai", "ai")}
+        <button type="button" className={"nav" + (aiOpen ? " on" : "")} title="Ask AI" onClick={() => { toggleAI(); setRailOpen(false); }}><Ico n="ai" /><span className="lb"><span className="lg">Ask AI</span><span className="sh">Ask AI</span></span></button>
         {link("#/learn", "Syllabus", "learn", "learn")}
         {link("#/prep", "Interview prep", "prep", "prep", undefined, active === "prep", "Prep")}
         {link("#/browse", "Most recommended", "browse", "best", undefined, active === "browse" && route.q.get("dur") !== "long", "Top")}
@@ -198,6 +202,7 @@ export default function App() {
       <div className="scrim" onClick={() => setRailOpen(false)} />
 
       <main id="main" tabIndex={-1} key={route.path.join("/")}>{body}</main>
+      {data ? <AIPanel data={data} /> : null}
 
       <Toaster />
 

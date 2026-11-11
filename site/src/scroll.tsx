@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Thumb, toast } from "./components";
 import { fmtDur, LEVEL_NAME, type Data } from "./data";
 import { relatedTo, tokens } from "./related";
+import { openAI } from "./aistate";
 import { PillSelect } from "./views";
 import { compact } from "./news";
 import { dayKey, scrollActions, streakOf, useScrollState, useShortsData, type Short } from "./proscroll";
@@ -144,7 +145,7 @@ function Deeper({ s, data, deck, labels, onClose, onJump }: { s: Short; data: Da
             <ul className="sc-more">{more.map((r) => <li key={r.x.i}><button onClick={() => onJump(r.n)}><span>{clean(r.x.t)}</span><small>{r.x.c}, {labels[r.x.k] ?? r.x.k}</small></button></li>)}</ul>
           </section>
         ) : null}
-        <a className="btn btn-primary sc-ask" href={`#/ai?ask=${encodeURIComponent(`I just watched a Short called "${clean(s.t)}" by ${s.c}. Help me learn this properly. Ask me a few questions, then suggest videos from the catalogue.`)}`}>Ask AI to explain this</a>
+        <button className="btn btn-primary sc-ask" onClick={() => { onClose(); openAI(`I just watched a Short called "${clean(s.t)}" by ${s.c}. Help me learn this properly. Ask me a few questions, then suggest videos from the catalogue.`); }}>Ask AI to explain this</button>
       </aside>
     </div>
   );
