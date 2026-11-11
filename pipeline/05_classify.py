@@ -40,6 +40,9 @@ def handle(url):
     return m.group(1).lower() if m else None
 
 
+OFFTOPIC = re.compile(r"(malware|reverse engineering|autoruns|forensic|penetration test|ctf\b|slam [a-z] \d|computational finance|quantitative finance|options pricing|black.scholes|stock market|forex|trading strategy|real estate|accounting|tax return|biology|organic chemistry|thermodynamics|fluid mechanics|circuit analysis|signals and systems|control systems|power electronics|civil engineering|mechanical engineering|gre prep|gmat|ielts|toefl)")
+OFFCHAN = {"opensecuritytraining2", "ulfinance", "claus brenner"}
+
 def classify(c, o, api=None):
     title = (o.get("title") or (api or {}).get("title") or "")
     chan = o.get("channel") or (api or {}).get("channel") or ""
@@ -49,6 +52,8 @@ def classify(c, o, api=None):
     tl = title.lower()
     body = f"{chan} {desc} {tags} {srcctx}".lower()
     if NEG.search(tl) and not c["src_count"]:
+        return None
+    if OFFTOPIC.search(tl) or chan.strip().lower() in OFFCHAN:
         return None
     scores = collections.Counter(); hits = collections.defaultdict(list)
     for nid, pat, w in PATS:

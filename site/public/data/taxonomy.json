@@ -10,59 +10,59 @@
      "title": "Python fundamentals",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 13
+     "count": 32
     },
     {
      "id": "py-advanced",
      "title": "Advanced Python",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 5
+     "count": 31
     },
     {
      "id": "py-data",
      "title": "NumPy, Pandas, Matplotlib",
      "shelf": "semi",
      "level": "beginner",
-     "count": 1
+     "count": 55
     },
     {
      "id": "py-web",
      "title": "FastAPI and backends for AI",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 3
+     "count": 26
     },
     {
      "id": "sql",
      "title": "SQL and databases",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 11
+     "count": 50
     },
     {
      "id": "ts-js",
      "title": "TypeScript for AI apps",
      "shelf": "semi",
      "level": "beginner",
-     "count": 80
+     "count": 150
     },
     {
      "id": "tooling",
      "title": "Git, Linux, Docker, shell",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 17
+     "count": 53
     },
     {
      "id": "testing",
      "title": "Testing",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 2
+     "count": 10
     }
    ],
-   "count": 132
+   "count": 407
   },
   {
    "id": "cs",
@@ -74,21 +74,21 @@
      "title": "Operating systems",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 7
+     "count": 150
     },
     {
      "id": "cs-net",
      "title": "Networking and the web",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 37
+     "count": 150
     },
     {
      "id": "cs-arch",
      "title": "Computer architecture and low level",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 19
+     "count": 120
     },
     {
      "id": "cs-lang",
@@ -102,17 +102,17 @@
      "title": "Software engineering craft and architecture",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 27
+     "count": 150
     },
     {
      "id": "cs-security",
      "title": "Security and cryptography basics",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 6
+     "count": 58
     }
    ],
-   "count": 246
+   "count": 778
   },
   {
    "id": "dsa",
@@ -124,94 +124,94 @@
      "title": "Full DSA courses",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 4
+     "count": 54
     },
     {
      "id": "dsa-complexity",
      "title": "Complexity and Big-O",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 2
+     "count": 56
     },
     {
      "id": "dsa-arrays",
      "title": "Arrays, strings, hashing",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 2
+     "count": 24
     },
     {
      "id": "dsa-pointers",
      "title": "Two pointers and sliding window",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 0
+     "count": 15
     },
     {
      "id": "dsa-linked",
      "title": "Linked lists, stacks, queues",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 1
+     "count": 23
     },
     {
      "id": "dsa-search-sort",
      "title": "Binary search and sorting",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 13
+     "count": 85
     },
     {
      "id": "dsa-trees",
      "title": "Trees, BST, tries",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 3
+     "count": 70
     },
     {
      "id": "dsa-graphs",
      "title": "Graphs and shortest paths",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 14
+     "count": 133
     },
     {
      "id": "dsa-heaps",
      "title": "Heaps and priority queues",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 1
+     "count": 9
     },
     {
      "id": "dsa-backtracking",
      "title": "Recursion and backtracking",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 2
+     "count": 32
     },
     {
      "id": "dsa-dp",
      "title": "Dynamic programming",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 17
+     "count": 150
     },
     {
      "id": "dsa-greedy-bits",
      "title": "Greedy and bit manipulation",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 0
+     "count": 36
     },
     {
      "id": "dsa-practice",
      "title": "LeetCode patterns and practice",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 0
+     "count": 150
     }
    ],
-   "count": 59
+   "count": 837
   },
   {
    "id": "math",
@@ -223,52 +223,52 @@
      "title": "Linear algebra",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 11
+     "count": 150
     },
     {
      "id": "calculus",
      "title": "Calculus and gradients",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 9
+     "count": 150
     },
     {
      "id": "probability",
      "title": "Probability",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 13
+     "count": 150
     },
     {
      "id": "stats",
      "title": "Statistics",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 10
+     "count": 150
     },
     {
      "id": "optimization",
      "title": "Optimization",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 2
+     "count": 97
     },
     {
      "id": "info-theory",
      "title": "Information theory",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 8
+     "count": 54
     },
     {
      "id": "math-for-ml",
      "title": "Math for ML (combined)",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 0
+     "count": 16
     }
    ],
-   "count": 53
+   "count": 767
   },
   {
    "id": "ml",
@@ -280,73 +280,73 @@
      "title": "ML fundamentals and full courses",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 8
+     "count": 133
     },
     {
      "id": "ml-supervised",
      "title": "Regression and classification",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 5
+     "count": 150
     },
     {
      "id": "ml-trees",
      "title": "Trees and ensembles",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 2
+     "count": 109
     },
     {
      "id": "ml-unsupervised",
      "title": "Unsupervised learning",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 0
+     "count": 150
     },
     {
      "id": "ml-features",
      "title": "Feature engineering and data",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 0
+     "count": 21
     },
     {
      "id": "ml-eval",
      "title": "Model evaluation",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 2
+     "count": 98
     },
     {
      "id": "ml-sklearn",
      "title": "scikit-learn and tabular ML",
      "shelf": "semi",
      "level": "beginner",
-     "count": 0
+     "count": 21
     },
     {
      "id": "ml-timeseries",
      "title": "Time series and forecasting",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 0
+     "count": 25
     },
     {
      "id": "ml-recsys",
      "title": "Recommender systems",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 0
+     "count": 19
     },
     {
      "id": "ml-theory",
      "title": "Learning theory",
      "shelf": "evergreen",
      "level": "advanced",
-     "count": 1
+     "count": 150
     }
    ],
-   "count": 18
+   "count": 876
   },
   {
    "id": "dl",
@@ -358,66 +358,66 @@
      "title": "Neural networks and backprop",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 31
+     "count": 150
     },
     {
      "id": "dl-pytorch",
      "title": "PyTorch and frameworks",
      "shelf": "semi",
      "level": "beginner",
-     "count": 7
+     "count": 113
     },
     {
      "id": "dl-cnn",
      "title": "CNNs and computer vision",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 6
+     "count": 150
     },
     {
      "id": "dl-seq",
      "title": "RNNs and sequence models",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 4
+     "count": 67
     },
     {
      "id": "dl-training",
      "title": "Training, optimization and regularization",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 0
+     "count": 31
     },
     {
      "id": "dl-generative",
      "title": "Generative models and diffusion",
      "shelf": "semi",
      "level": "advanced",
-     "count": 6
+     "count": 150
     },
     {
      "id": "dl-rl",
      "title": "Reinforcement learning",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 2
+     "count": 150
     },
     {
      "id": "dl-multimodal",
      "title": "Speech, audio and multimodal",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 4
+     "count": 69
     },
     {
      "id": "dl-selfsup",
      "title": "Self-supervised and representation learning",
      "shelf": "evergreen",
      "level": "advanced",
-     "count": 0
+     "count": 36
     }
    ],
-   "count": 60
+   "count": 916
   },
   {
    "id": "llm",
@@ -429,80 +429,80 @@
      "title": "Build GPT from scratch",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 13
+     "count": 24
     },
     {
      "id": "llm-tokens",
      "title": "Tokenization",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 1
+     "count": 13
     },
     {
      "id": "llm-attention",
      "title": "Transformers and attention",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 15
+     "count": 123
     },
     {
      "id": "llm-embeddings",
      "title": "Embeddings and representations",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 1
+     "count": 9
     },
     {
      "id": "llm-pretrain",
      "title": "Pretraining and scaling laws",
      "shelf": "semi",
      "level": "advanced",
-     "count": 0
+     "count": 18
     },
     {
      "id": "llm-post",
      "title": "Post-training: SFT, RLHF, DPO",
      "shelf": "semi",
      "level": "advanced",
-     "count": 2
+     "count": 39
     },
     {
      "id": "llm-inference-internals",
      "title": "KV cache and inference internals",
      "shelf": "semi",
      "level": "advanced",
-     "count": 0
+     "count": 12
     },
     {
      "id": "llm-efficiency",
      "title": "Quantization, distillation, MoE",
      "shelf": "semi",
      "level": "advanced",
-     "count": 0
+     "count": 37
     },
     {
      "id": "llm-reasoning",
      "title": "Reasoning models",
      "shelf": "fast",
      "level": "advanced",
-     "count": 1
+     "count": 12
     },
     {
      "id": "llm-interp",
      "title": "Interpretability and safety",
      "shelf": "semi",
      "level": "advanced",
-     "count": 11
+     "count": 110
     },
     {
      "id": "llm-overview",
      "title": "LLM overviews and intros",
      "shelf": "semi",
      "level": "beginner",
-     "count": 2
+     "count": 4
     }
    ],
-   "count": 46
+   "count": 401
   },
   {
    "id": "aieng",
@@ -514,108 +514,108 @@
      "title": "AI engineer roadmaps and overviews",
      "shelf": "fast",
      "level": "beginner",
-     "count": 10
+     "count": 145
     },
     {
      "id": "ae-prompting",
      "title": "Prompt engineering",
      "shelf": "fast",
      "level": "beginner",
-     "count": 2
+     "count": 17
     },
     {
      "id": "ae-apis",
      "title": "LLM APIs and SDKs",
      "shelf": "fast",
      "level": "beginner",
-     "count": 1
+     "count": 4
     },
     {
      "id": "ae-vector",
      "title": "Embeddings, vector search, vector DBs",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 4
+     "count": 10
     },
     {
      "id": "ae-rag",
      "title": "RAG",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 2
+     "count": 13
     },
     {
      "id": "ae-agents",
      "title": "Agents and tool use",
      "shelf": "fast",
      "level": "intermediate",
-     "count": 30
+     "count": 150
     },
     {
      "id": "ae-mcp",
      "title": "MCP and agent protocols",
      "shelf": "fast",
      "level": "intermediate",
-     "count": 0
+     "count": 18
     },
     {
      "id": "ae-context",
      "title": "Context engineering and memory",
      "shelf": "fast",
      "level": "intermediate",
-     "count": 0
+     "count": 7
     },
     {
      "id": "ae-evals",
      "title": "Evals and testing LLM apps",
      "shelf": "fast",
      "level": "intermediate",
-     "count": 7
+     "count": 14
     },
     {
      "id": "ae-finetune",
      "title": "Fine-tuning",
      "shelf": "semi",
      "level": "advanced",
-     "count": 0
+     "count": 23
     },
     {
      "id": "ae-codegen",
      "title": "AI coding tools and vibe coding",
      "shelf": "fast",
      "level": "beginner",
-     "count": 15
+     "count": 91
     },
     {
      "id": "ae-local",
      "title": "Open models and local LLMs",
      "shelf": "fast",
      "level": "beginner",
-     "count": 3
+     "count": 150
     },
     {
      "id": "ae-llmops",
      "title": "LLMOps, observability, cost",
      "shelf": "fast",
      "level": "advanced",
-     "count": 2
+     "count": 68
     },
     {
      "id": "ae-multimodal",
      "title": "Multimodal and voice apps",
      "shelf": "fast",
      "level": "intermediate",
-     "count": 1
+     "count": 14
     },
     {
      "id": "ae-projects",
      "title": "AI engineering projects",
      "shelf": "fast",
      "level": "beginner",
-     "count": 0
+     "count": 5
     }
    ],
-   "count": 77
+   "count": 729
   },
   {
    "id": "infra",
@@ -627,45 +627,45 @@
      "title": "MLOps fundamentals",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 2
+     "count": 63
     },
     {
      "id": "infra-containers",
      "title": "Docker, Kubernetes, cloud",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 14
+     "count": 29
     },
     {
      "id": "infra-serving",
      "title": "Model serving and inference engineering",
      "shelf": "fast",
      "level": "advanced",
-     "count": 0
+     "count": 9
     },
     {
      "id": "infra-gpu",
      "title": "GPUs and CUDA",
      "shelf": "evergreen",
      "level": "advanced",
-     "count": 9
+     "count": 150
     },
     {
      "id": "infra-distributed",
      "title": "Distributed training",
      "shelf": "semi",
      "level": "advanced",
-     "count": 0
+     "count": 14
     },
     {
      "id": "infra-data",
      "title": "Data engineering for ML",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 8
+     "count": 50
     }
    ],
-   "count": 33
+   "count": 315
   },
   {
    "id": "sysdesign",
@@ -677,21 +677,21 @@
      "title": "System design fundamentals",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 6
+     "count": 67
     },
     {
      "id": "sd-data",
      "title": "Databases, caching, queues",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 5
+     "count": 59
     },
     {
      "id": "sd-distributed",
      "title": "Distributed systems",
      "shelf": "evergreen",
      "level": "advanced",
-     "count": 16
+     "count": 147
     },
     {
      "id": "sd-cases",
@@ -715,7 +715,7 @@
      "count": 0
     }
    ],
-   "count": 27
+   "count": 273
   },
   {
    "id": "papers",
@@ -727,31 +727,31 @@
      "title": "Paper explainers",
      "shelf": "semi",
      "level": "advanced",
-     "count": 13
+     "count": 83
     },
     {
      "id": "pp-howto",
      "title": "How to read papers and do research",
      "shelf": "evergreen",
      "level": "intermediate",
-     "count": 0
+     "count": 1
     },
     {
      "id": "pp-talks",
      "title": "Conference talks and lecture series",
      "shelf": "semi",
      "level": "advanced",
-     "count": 24
+     "count": 90
     },
     {
      "id": "pp-interviews",
      "title": "Long-form interviews and podcasts",
      "shelf": "fast",
      "level": "beginner",
-     "count": 43
+     "count": 62
     }
    ],
-   "count": 80
+   "count": 236
   },
   {
    "id": "career",
@@ -763,14 +763,14 @@
      "title": "Career roadmaps",
      "shelf": "semi",
      "level": "beginner",
-     "count": 1
+     "count": 2
     },
     {
      "id": "cr-coding",
      "title": "Coding interview strategy",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 4
+     "count": 27
     },
     {
      "id": "cr-ml-interview",
@@ -791,38 +791,38 @@
      "title": "Forward-deployed and solutions roles",
      "shelf": "fast",
      "level": "intermediate",
-     "count": 0
+     "count": 1
     },
     {
      "id": "cr-behavioral",
      "title": "Behavioral and soft skills",
      "shelf": "evergreen",
      "level": "beginner",
-     "count": 0
+     "count": 2
     },
     {
      "id": "cr-portfolio",
      "title": "Resume, portfolio and projects",
      "shelf": "semi",
      "level": "beginner",
-     "count": 4
+     "count": 31
     },
     {
      "id": "cr-kaggle",
      "title": "Kaggle and competitions",
      "shelf": "semi",
      "level": "intermediate",
-     "count": 2
+     "count": 46
     },
     {
      "id": "cr-freelance",
      "title": "Freelancing and building in public",
      "shelf": "semi",
      "level": "beginner",
-     "count": 0
+     "count": 3
     }
    ],
-   "count": 11
+   "count": 112
   }
  ]
 }

@@ -1,15 +1,13 @@
 {
  "built": "2026-11-11",
- "videos": 842,
- "nodes": 75,
+ "videos": 6647,
+ "nodes": 99,
  "year": 2026,
  "cap_per_node": 150,
  "hn_comments": 275113,
  "ages": {
-  "m": 563,
-  "u": 197,
-  "t": 82
+  "p": 6647
  },
- "hasDuration": false,
- "channels": 379
+ "hasDuration": true,
+ "channels": 692
 }
