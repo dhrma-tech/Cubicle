@@ -18,10 +18,13 @@ export const IconCheck = ({ on }: { on?: boolean }) => <I fill={on} d="M4.5 12.5
 export function Thumb({ v, big }: { v: Video; big?: boolean }) {
   const { settings } = useStore();
   const [fallback, setFallback] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const img = useRef<HTMLImageElement>(null);
+  useEffect(() => { if (img.current?.complete && img.current.naturalWidth) setLoaded(true); }, []);
   const file = settings.thumb === "mid" && !fallback ? "hq2.jpg" : "hqdefault.jpg";
   return (
-    <span className={"thumb" + (big ? " thumb-big" : "")}>
-      <img src={`https://i.ytimg.com/vi/${v.i}/${file}`} alt="" loading="lazy" onError={() => setFallback(true)} />
+    <span className={"thumb" + (big ? " thumb-big" : "") + (loaded ? " loaded" : "")}>
+      <img ref={img} src={`https://i.ytimg.com/vi/${v.i}/${file}`} alt="" loading="lazy" onLoad={() => setLoaded(true)} onError={() => setFallback(true)} />
       {v.d ? <span className="dur">{fmtDur(v.d)}</span> : null}
       <FreshBar v={v} />
     </span>

@@ -26,6 +26,23 @@ function useRoute() {
   return r;
 }
 
+const ICONS: Record<string, string> = {
+  home: "M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10",
+  learn: "M4 6h16M4 12h16M4 18h10",
+  prep: "M3 8h18v12H3zM9 8V5h6v3M3 13h18",
+  best: "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",
+  longs: "M4 5h16v14H4zM10 9.5v5l4.5-2.5z",
+  liked: "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.6-7 10-7 10z",
+  later: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2",
+  history: "M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 8v5l3 2",
+  progress: "M4 12l5 5L20 6",
+  settings: "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2",
+  about: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01",
+};
+const Ico = ({ n }: { n: string }) => (
+  <svg className="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={ICONS[n]} /></svg>
+);
+
 const SHORTCUTS: [string, string][] = [
   ["/", "Search"], ["j / k", "Next / previous video"], ["Enter", "Open the selected video"], ["l", "Like the selected video"],
   ["w", "Add to watch later"], ["d", "Mark done"], ["g then h", "Go home"], ["g then s", "Go to the syllabus"], ["g then p", "Go to interview prep"], ["?", "Show this list"],
@@ -36,6 +53,7 @@ export default function App() {
   const route = useRoute();
   const st = useStore();
   const [railOpen, setRailOpen] = useState(false);
+  const [mini, setMini] = useState(() => { try { return localStorage.getItem("devtube.mini") === "1"; } catch { return false; } });
   const [help, setHelp] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const sel = useRef(-1);
@@ -89,9 +107,14 @@ export default function App() {
 
   const [p0, p1] = route.path;
   const active = p0 || "home";
-  const link = (href: string, label: string, key: string, count?: number) => (
-    <a href={href} className={"nav" + (active === key ? " on" : "")} aria-current={active === key ? "page" : undefined}>
-      <span>{label}</span>{count ? <small>{count}</small> : null}
+  const isWatch = p0 === "watch";
+  const toggleRail = () => {
+    if (isWatch || matchMedia("(max-width: 860px)").matches) { setRailOpen((o) => !o); return; }
+    setMini((m) => { const n = !m; try { localStorage.setItem("devtube.mini", n ? "1" : "0"); } catch { /* private mode */ } return n; });
+  };
+  const link = (href: string, label: string, key: string, icon: string, count?: number, on = active === key, short?: string) => (
+    <a href={href} className={"nav" + (on ? " on" : "")} aria-current={on ? "page" : undefined} title={label}>
+      <Ico n={icon} /><span className="lb"><span className="lg">{label}</span><span className="sh">{short ?? label}</span></span>{count ? <small>{count}</small> : null}
     </a>
   );
 
@@ -118,29 +141,31 @@ export default function App() {
   }
 
   return (
-    <div className={"shell" + (railOpen ? " rail-open" : "")}>
+    <div className={"shell" + (railOpen ? " rail-open" : "") + (isWatch ? " drawer" : mini ? " mini" : "")}>
       <a className="skip" href="#main" onClick={(e) => { e.preventDefault(); document.getElementById("main")?.focus(); }}>Skip to content</a>
       <header className="top">
-        <button type="button" className="burger" aria-label="Menu" aria-expanded={railOpen} onClick={() => setRailOpen((o) => !o)}><span /><span /><span /></button>
-        <a className="brand" href="#/" aria-label="DEV Tube home"><b>DEV</b>Tube</a>
+        <div className="top-l">
+          <button type="button" className="burger" aria-label="Toggle menu" aria-expanded={isWatch || railOpen ? railOpen : !mini} onClick={toggleRail}><span /><span /><span /></button>
+          <a className="brand" href="#/" aria-label="DEV Tube home"><b>DEV</b>Tube</a>
+        </div>
         <form className="search" role="search" onSubmit={(e) => { e.preventDefault(); const v = searchRef.current?.value.trim(); go(v ? `/browse?q=${encodeURIComponent(v)}` : "/browse"); searchRef.current?.blur(); }}>
-          <span className="search-in"><input ref={searchRef} type="search" placeholder="Search videos, channels, topics" aria-label="Search videos" defaultValue={p0 === "browse" ? route.q.get("q") ?? "" : ""} key={p0 === "browse" ? route.q.get("q") ?? "" : "x"} /><kbd aria-hidden="true">/</kbd></span>
+          <span className="search-in"><input ref={searchRef} type="search" placeholder="Search videos, channels, topics" aria-label="Search videos" defaultValue={p0 === "browse" ? route.q.get("q") ?? "" : ""} key={p0 === "browse" ? route.q.get("q") ?? "" : "x"} /></span>
           <button type="submit" className="search-btn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4.2-4.2" /></svg></button>
         </form>
-        <button type="button" className="textbtn" onClick={() => setHelp(true)} aria-label="Keyboard shortcuts">?</button>
+        <div className="top-r" />
       </header>
 
       <nav className="rail" aria-label="Main">
-        {link("#/", "Home", "home")}
-        {link("#/learn", "Syllabus", "learn")}
-        {link("#/prep", "Interview prep", "prep")}
-        {link("#/browse", "Most recommended", "browse")}
-        {data?.meta.hasDuration ? <a className="nav" href="#/browse?dur=long"><span>Longs</span></a> : null}
+        {link("#/", "Home", "home", "home")}
+        {link("#/learn", "Syllabus", "learn", "learn")}
+        {link("#/prep", "Interview prep", "prep", "prep", undefined, active === "prep", "Prep")}
+        {link("#/browse", "Most recommended", "browse", "best", undefined, active === "browse" && route.q.get("dur") !== "long", "Top")}
+        {data?.meta.hasDuration ? link("#/browse?dur=long", "Longs", "longs", "longs", undefined, active === "browse" && route.q.get("dur") === "long") : null}
         <hr />
-        {link("#/liked", "Liked", "liked", st.liked.length)}
-        {link("#/later", "Watch later", "later", st.later.length)}
-        {link("#/history", "History", "history")}
-        {link("#/progress", "Progress", "progress", Object.keys(st.done).length)}
+        {link("#/liked", "Liked", "liked", "liked", st.liked.length)}
+        {link("#/later", "Watch later", "later", "later", st.later.length)}
+        {link("#/history", "History", "history", "history")}
+        {link("#/progress", "Progress", "progress", "progress", Object.keys(st.done).length)}
         {data ? (
           <>
             <hr />
@@ -151,12 +176,12 @@ export default function App() {
           </>
         ) : null}
         <hr />
-        {link("#/settings", "Settings", "settings")}
-        {link("#/about", "How this works", "about")}
+        {link("#/settings", "Settings", "settings", "settings")}
+        {link("#/about", "How this works", "about", "about", undefined, active === "about", "About")}
       </nav>
       <div className="scrim" onClick={() => setRailOpen(false)} />
 
-      <main id="main" tabIndex={-1}>{body}</main>
+      <main id="main" tabIndex={-1} key={route.path.join("/")}>{body}</main>
 
       <Toaster />
 
