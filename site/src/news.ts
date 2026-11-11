@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 export interface NewsItem {
   id: string; s: string; sn: string; g: "hn" | "labs" | "blogs" | "research" | "repos" | "community";
@@ -39,10 +39,38 @@ export const useNewsState = () => useSyncExternalStore((cb) => { subs.add(cb); r
 export const previousVisit = () => prevVisit;
 
 /* ---------- data ---------- */
+const norm = (u: string) => (u || "").trim().toLowerCase().replace(/^https?:\/\/(www\.)?/, "").replace(/[?#].*$/, "").replace(/\/$/, "");
+const LIVE = new Set(["hn", "hfpapers", "lobsters"]);   // sources the /api/news function can fetch on demand
+// same formula as the data pipeline (07_fetch_news.py); only the live groups are ever scored here
+const BASE: Record<string, (i: NewsItem) => number> = { hn: (i) => i.sc + 1.5 * i.cm, community: (i) => i.sc * 6 + i.cm, research: (i) => 20 + i.sc * 4 };
+const hot = (i: NewsItem) => {
+  const age = Math.max(1, (Date.now() / 1000 - i.ts) / 3600);
+  return Math.round(((BASE[i.g]?.(i) ?? 0) / (age + 2) ** 1.1) * 100) / 100;
+};
+
+/** Merge live items over the static snapshot: live sources are replaced, everything else is kept. */
+function merge(cur: NewsData, live: NewsData): NewsData {
+  const kept = cur.items.filter((i) => !LIVE.has(i.s));
+  const urls = new Set(kept.map((i) => norm(i.u)));
+  const fresh: NewsItem[] = [];
+  for (const i of live.items) { const k = norm(i.u); if (urls.has(k)) continue; urls.add(k); fresh.push({ ...i, hot: hot(i) }); }
+  const okIds = new Set(live.sources.filter((s) => s.ok).map((s) => s.id));
+  // a live source that failed keeps its older items instead of vanishing
+  const stale = cur.items.filter((i) => LIVE.has(i.s) && !okIds.has(i.s) && !urls.has(norm(i.u)));
+  const items = [...kept, ...fresh, ...stale].sort((a, b) => b.hot - a.hot);
+  const sources = [...cur.sources.filter((s) => !okIds.has(s.id)), ...live.sources.filter((s) => s.ok)];
+  return { updated: live.updated, items, sources };
+}
+
+export interface RefreshResult { added: number; live: boolean }
+
 export function useNewsData() {
   const [data, setData] = useState<NewsData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [tick, setTick] = useState(0);
+  const cur = useRef<NewsData | null>(null);
+  cur.current = data;
   useEffect(() => {
     let off = false;
     setError(null);
@@ -52,7 +80,30 @@ export function useNewsData() {
       .catch((e) => { if (!off) setError(String(e.message || e)); });
     return () => { off = true; };
   }, [tick]);
-  return { data, error, reload: () => setTick((t) => t + 1) };
+
+  /** Pull the newest snapshot, then overlay live Hacker News, papers and Lobsters on top of it. */
+  const refresh = async (): Promise<RefreshResult> => {
+    if (refreshing) return { added: 0, live: true };
+    setRefreshing(true);
+    try {
+      const before = new Set((cur.current?.items ?? []).map((i) => i.id));
+      let base = cur.current;
+      try {
+        const r = await fetch(`./data/news.json?t=${Date.now()}`, { cache: "no-store" });
+        if (r.ok) base = (await r.json()) as NewsData;
+      } catch { /* keep what is on screen */ }
+      if (!base) throw new Error("no data");
+      let live = false; let next = base;
+      try {
+        const r = await fetch("/api/news", { cache: "no-store" });
+        const j = r.ok ? ((await r.json().catch(() => null)) as NewsData | null) : null;
+        if (j && Array.isArray(j.items) && j.items.length) { next = merge(base, j); live = true; }
+      } catch { /* function not available (local preview): the snapshot is all there is */ }
+      setData(next); setError(null);
+      return { added: next.items.filter((i) => !before.has(i.id)).length, live };
+    } finally { setRefreshing(false); }
+  };
+  return { data, error, refreshing, refresh, reload: () => setTick((t) => t + 1) };
 }
 
 export function ago(ts: number, now = Date.now()) {

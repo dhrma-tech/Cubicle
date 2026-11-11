@@ -889,3 +889,8 @@ button.nav { background: none; border: 0; width: 100%; font: inherit; color: inh
   .aip-fab { right: 16px; bottom: 18px; width: 54px; height: 54px; }
 }
 @media (prefers-reduced-motion: reduce) { .aip, .aip-fab, .shell > main { transition: none; } }
+
+.ex-refresh.is-busy svg { animation: ex-spin .8s linear infinite; }
+.ex-refresh:disabled { opacity: .75; cursor: default; }
+@keyframes ex-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ex-refresh.is-busy svg { animation-duration: 2s; } }

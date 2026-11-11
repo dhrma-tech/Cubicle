@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Avatar, Empty } from "./components";
+import { Avatar, Empty, toast } from "./components";
 import { PillSelect } from "./views";
 import { ago, compact, GROUPS, newsActions, previousVisit, useNewsData, useNewsState, type NewsItem } from "./news";
 
@@ -85,7 +85,13 @@ const dayLabel = (ts: number) => {
 };
 
 export function Explore({ q }: { q: URLSearchParams }) {
-  const { data, error, reload } = useNewsData();
+  const { data, error, reload, refresh, refreshing } = useNewsData();
+  const doRefresh = async () => {
+    try {
+      const r = await refresh();
+      toast(!r.live ? "Showing the latest saved snapshot. Live feeds are only available on the deployed site." : r.added ? `${r.added} new ${r.added === 1 ? "story" : "stories"}` : "Already up to date");
+    } catch { toast("Could not refresh. Check your connection."); }
+  };
   const ns = useNewsState();
   const [shown, setShown] = useState(20);
   const g = q.get("g") || "all", sort = q.get("sort") || "top", onlySaved = q.get("saved") === "1";
@@ -121,7 +127,7 @@ export function Explore({ q }: { q: URLSearchParams }) {
           <h1>What’s happening in AI</h1>
           <p className="ex-sub">Hacker News, official lab blogs, newsletters, new papers and open-source repos in one place.{data ? ` Updated ${updated}.` : ""}</p>
         </div>
-        <button type="button" className="btn ex-refresh" onClick={reload}><Ico d={P.refresh} size={16} /> Refresh</button>
+        <button type="button" className={"btn ex-refresh" + (refreshing ? " is-busy" : "")} onClick={() => void doRefresh()} disabled={refreshing} aria-busy={refreshing}><Ico d={P.refresh} size={16} /> {refreshing ? "Refreshing" : "Refresh"}</button>
       </header>
 
       <div className="ex-bar" role="group" aria-label="Filter stories">
