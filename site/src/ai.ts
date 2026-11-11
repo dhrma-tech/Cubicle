@@ -29,7 +29,7 @@ class AIError extends Error { constructor(public code: string, public detail = "
 
 const str = (type: string, description?: string) => ({ type, description });
 const DECLS = [
-  { name: "search_catalogue", description: "Search the DEV Tube catalogue. Returns real videos with ids. Call it several times with different filters before recommending anything.",
+  { name: "search_catalogue", description: "Search the Cubicle catalogue. Returns real videos with ids. Call it several times with different filters before recommending anything.",
     parameters: { type: "OBJECT", properties: {
       query: str("STRING", "Keywords matched against title, channel and topic"), node: str("STRING", "Exact topic node id from the taxonomy"), section: str("STRING", "Exact section id"),
       level: { type: "STRING", enum: ["b", "i", "a"], description: "b beginner, i intermediate, a advanced" },
@@ -41,13 +41,13 @@ const DECLS = [
   { name: "save_plan", description: "Offer the user a day-by-day study plan built from catalogue videos. They confirm with a Use this plan button, then it appears on their Home page as Today. Use it when they ask for a study plan or schedule.",
     parameters: { type: "OBJECT", properties: { goal: str("STRING", "Short plan name, e.g. LLM engineer in 8 weeks"), minutes_per_day: str("INTEGER", "Study minutes per day"), ids: { type: "ARRAY", items: str("STRING"), description: "Video ids in watch order" }, notes: { type: "ARRAY", items: str("STRING") } }, required: ["goal", "ids", "minutes_per_day"] } },
   { name: "fetch_youtube", description: "Read a YouTube link the user pasted: title, channel, length, and whether it is already in the catalogue.", parameters: { type: "OBJECT", properties: { url: str("STRING") }, required: ["url"] } },
-  { name: "propose_video", description: "Offer to add a YouTube video (from fetch_youtube) to the user's own DEV Tube. Only they will see it. They confirm with a button.",
+  { name: "propose_video", description: "Offer to add a YouTube video (from fetch_youtube) to the user's own Cubicle. Only they will see it. They confirm with a button.",
     parameters: { type: "OBJECT", properties: { id: str("STRING"), node: str("STRING", "Best matching topic node id"), level: { type: "STRING", enum: ["b", "i", "a"] }, note: str("STRING", "One sentence on why it fits that topic") }, required: ["id", "node", "level"] } },
 ];
 
 function systemPrompt(d: Data, page?: string) {
   const tax = d.sections.map((s) => `${s.id}: ${s.nodes.map((n) => `${n.id} (${n.title}, ${n.level})`).join("; ")}`).join("\n");
-  return `You are DEV Guide, the learning assistant inside DEV Tube, a curated YouTube catalogue for people who want to become AI, ML and AI engineers. The catalogue has ${d.meta.videos} videos across the topics below.
+  return `You are Cubicle Guide, the learning assistant inside Cubicle, a curated YouTube catalogue for people who want to become AI, ML and AI engineers. The catalogue has ${d.meta.videos} videos across the topics below.
 
 Rules
 - Recommend only videos returned by search_catalogue. Never invent a video, channel or id. The interface draws the video cards, so refer to videos by title only in text.

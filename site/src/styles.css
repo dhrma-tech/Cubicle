@@ -1,4 +1,4 @@
-/* DEV Tube — tokens
+/* Cubicle — tokens
    neutral surfaces like YouTube; bottle green (--accent) only on highlights; amber = the "vouch" signal only */
 :root {
   --chalk: #ffffff;
@@ -58,7 +58,7 @@ kbd { font: 500 12px var(--font-ui); border: 1px solid var(--line); border-botto
   padding: 0 20px; background: var(--page); border-bottom: 1px solid var(--line);
 }
 .brand { font: 700 21px var(--font-display); letter-spacing: -0.03em; }
-.brand b { background: var(--accent); color: var(--accent-ink); padding: 0 6px 1px; border-radius: 5px; margin-right: 3px; font-weight: 800; }
+.brand b { background: var(--accent); color: var(--accent-ink); padding: 0 6px 1px; border-radius: 5px; font-weight: 800; }
 .search { flex: 1; max-width: 620px; display: flex; }
 .search-in { position: relative; flex: 1; display: block; }
 .search input {

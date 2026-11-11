@@ -1,10 +1,10 @@
-# DEV Tube
+# Cubicle
 
 **A YouTube for AI and ML engineers, with no algorithm: only videos that several independent people and course lists recommend.**
 
-DEV Tube is a free, static website that collects the best YouTube videos for machine learning, AI engineering, programming, DSA, system design and job prep, and lays them out as a syllabus. A video is listed only when more than one independent source vouches for it: Hacker News commenters, university course pages, GitHub roadmaps, and a short list of trusted channels. It has no accounts, no tracking and no backend. Everything you do (likes, watch later, progress) stays in your own browser.
+Cubicle is a free, static website that collects the best YouTube videos for machine learning, AI engineering, programming, DSA, system design and job prep, and lays them out as a syllabus. A video is listed only when more than one independent source vouches for it: Hacker News commenters, university course pages, GitHub roadmaps, and a short list of trusted channels. It has no accounts, no tracking and no backend. Everything you do (likes, watch later, progress) stays in your own browser.
 
-Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). DEV Tube narrows the idea to one audience and adds a learning order, freshness scoring and an interview-prep layer.
+Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). Cubicle narrows the idea to one audience and adds a learning order, freshness scoring and an interview-prep layer.
 
 ---
 
@@ -34,7 +34,7 @@ Everything below is local to the browser (key `devtube.study.v1`). Use Settings,
 | Skill map (syllabus coverage and gaps) and weekly report | `#/skills` |
 | Follow channels and topics, "New for you" feed | `#/following` |
 | Command palette (Ctrl or Cmd + K) | Everywhere |
-| Installable app and share target: share a YouTube link to DEV Tube and Ask AI proposes it | Browser install prompt |
+| Installable app and share target: share a YouTube link to Cubicle and Ask AI proposes it | Browser install prompt |
 
 ## Who This README Is For
 
@@ -206,7 +206,7 @@ A finished single-purpose static site. The catalogue depends on the data you bui
 
 ## Privacy and Your Data
 
-- No accounts, no analytics, no cookies set by DEV Tube
+- No accounts, no analytics, no cookies set by Cubicle
 - Likes, history and progress stay in your browser and never leave it
 - Hover previews and the watch page load YouTube embeds through `youtube-nocookie.com`; YouTube sees those requests
 - Use **Settings, Erase everything** to clear all local data

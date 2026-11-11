@@ -98,7 +98,7 @@ def main():
     print(json.dumps(meta)); print("top nodes:", counts.most_common(8))
 
 
-DATA_MD = """# DEV Tube data export
+DATA_MD = """# Cubicle data export
 
 A curated catalogue of YouTube videos for AI / ML / AI engineering / programming / DSA / system design / job prep,
 ranked by how many *independent* sources recommend each video. Hand this zip to your own coding agent

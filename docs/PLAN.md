@@ -1,4 +1,4 @@
-# DEV Tube: build plan (single release)
+# Cubicle: build plan (single release)
 
 Status as of 2026-11-11: pipeline and site are built and tested end to end on real data. Two optional inputs would deepen the catalogue (YouTube API key, Anthropic API key). Everything else is done.
 
@@ -68,7 +68,7 @@ Design: bottle-green ink on chalk paper (dark: deep bottle green), amber reserve
 - YouTube API terms on caching metadata: check before public launch; embeds use the official player.
 - HN skews senior and systems-oriented; beginner and DSA depth comes from lists and channels.
 - Videos can be deleted or lose embedding; rerun `04a_oembed.py` periodically (cache entries marked gone are skipped in the next classify).
-- Name "DEV Tube" is a working title.
+- Name "Cubicle" is a working title.
 
 ## 8. Deploy
 Vercel / Cloudflare Pages / GitHub Pages: root `site`, build `npm run build`, output `dist`. Buy the domain, point it at the host. Update by re-running the pipeline, rebuilding and redeploying.

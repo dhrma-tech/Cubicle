@@ -1,4 +1,4 @@
-"""Shared helpers for the DEV Tube pipeline."""
+"""Shared helpers for the Cubicle pipeline."""
 import html, re, json, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent

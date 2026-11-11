@@ -241,7 +241,7 @@ export function Home({ data, q, top }: { data: Data; q: URLSearchParams; top?: R
 
       {chipId === "all" ? top : null}
       {!s.introDismissed && chipId === "all" ? (
-        <aside className="intro" aria-label="About DEV Tube">
+        <aside className="intro" aria-label="About Cubicle">
           <p><b>{data.videos.length.toLocaleString()} videos</b> for machine learning, AI engineering, programming, DSA and interviews. Each one is here because several independent people or course lists recommended it. No account needed.</p>
           <span className="intro-actions">
             <a className="btn btn-primary" href="#/learn">Open the syllabus</a>
@@ -448,7 +448,7 @@ export function SettingsPage() {
   };
   const upload = async (f?: File) => {
     if (!f) return;
-    try { const j = JSON.parse(await f.text()); const st = j._study; delete j._study; actions.importJSON(JSON.stringify(j)); if (st) study.importJSON(JSON.stringify(st)); setMsg("Progress restored."); } catch (e) { setMsg("That file is not a DEV Tube backup. Choose the file you exported."); }
+    try { const j = JSON.parse(await f.text()); const st = j._study; delete j._study; actions.importJSON(JSON.stringify(j)); if (st) study.importJSON(JSON.stringify(st)); setMsg("Progress restored."); } catch (e) { setMsg("That file is not a Cubicle backup. Choose the file you exported."); }
   };
   return (
     <div className="page narrow">
@@ -496,7 +496,7 @@ export function About({ data }: { data: Data }) {
   return (
     <div className="page narrow prose">
       <PageHead title="How this works" />
-      <p>DEV Tube is a syllabus for AI, machine learning and AI engineering, filled with videos that people keep recommending to each other. It currently has {m.videos.toLocaleString()} videos from {m.channels.toLocaleString()} channels, sorted into {m.nodes} topics. Last built {m.built}.</p>
+      <p>Cubicle is a syllabus for AI, machine learning and AI engineering, filled with videos that people keep recommending to each other. It currently has {m.videos.toLocaleString()} videos from {m.channels.toLocaleString()} channels, sorted into {m.nodes} topics. Last built {m.built}.</p>
 
       <h2>Where the videos come from</h2>
       <p>Two independent signals. First, every YouTube link in the full Hacker News comment archive ({m.hn_comments.toLocaleString()} comments with links), counted by how many different users linked each video and how many of them were recommending it. Second, course lists: university syllabi, GitHub roadmaps and awesome lists. A video needs more than one voice behind it, or a place on a trusted list, to get in.</p>
@@ -513,7 +513,7 @@ export function About({ data }: { data: Data }) {
       <p><a className="btn btn-primary" href="./devtube-data.zip" download>Download the data</a></p>
 
       <h2>Credits and limits</h2>
-      <p>Hacker News data comes from the open-index/hacker-news dataset (ODC-By 1.0); comment excerpts link back to the original comment. The idea follows Andrej Karpathy’s HackerTube. DEV Tube is independent and not affiliated with YouTube, Hacker News or Karpathy. Videos can be removed by their owners at any time. “Recommended often” is not the same as “correct”, so check anything you rely on.</p>
+      <p>Hacker News data comes from the open-index/hacker-news dataset (ODC-By 1.0); comment excerpts link back to the original comment. The idea follows Andrej Karpathy’s HackerTube. Cubicle is independent and not affiliated with YouTube, Hacker News or Karpathy. Videos can be removed by their owners at any time. “Recommended often” is not the same as “correct”, so check anything you rely on.</p>
     </div>
   );
 }

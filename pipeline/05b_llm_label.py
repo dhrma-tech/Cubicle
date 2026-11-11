@@ -10,7 +10,7 @@ from common import OUT, DATA, load_json
 TAX = load_json(DATA / "taxonomy.json")
 NODE_LIST = "\n".join(f"{n['id']}: {s['title']} > {n['title']} (typical level {n['level']}, shelf {n['shelf']})"
                       for s in TAX["sections"] for n in s["nodes"])
-SYSTEM = f"""You label YouTube videos for DEV Tube, a curated catalogue for people who want to become AI/ML engineers
+SYSTEM = f"""You label YouTube videos for Cubicle, a curated catalogue for people who want to become AI/ML engineers
 (AI engineering, ML, deep learning, LLMs, programming, DSA, CS foundations, system design, MLOps, interview/job prep).
 
 For each input line `id | title | channel | rule_guess` return one JSON object. Output ONLY a JSON array, one object per input, same order:

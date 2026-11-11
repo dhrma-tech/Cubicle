@@ -136,8 +136,8 @@ export default function App() {
     history.replaceState(null, "", location.pathname + "#/");
     const yt = /(?:https?:\/\/)?(?:[\w.]*\.)?(?:youtu\.be|youtube\.com)\/\S+/.exec(shared);
     openAI(yt
-      ? `Add this video to my DEV Tube: ${yt[0]}. Use fetch_youtube, tell me if it is already in the catalogue, and if not call propose_video with the best topic and level.`
-      : `I shared this with DEV Tube: ${shared.slice(0, 500)}`);
+      ? `Add this video to my Cubicle: ${yt[0]}. Use fetch_youtube, tell me if it is already in the catalogue, and if not call propose_video with the best topic and level.`
+      : `I shared this with Cubicle: ${shared.slice(0, 500)}`);
   }, []);
   const aiOpen = useAIOpen();
   useEffect(() => { if (route.path[0] === "ai") { openAI(route.q.get("ask") ?? undefined); history.replaceState(null, "", "#/"); dispatchEvent(new HashChangeEvent("hashchange")); } }, [route]);   // old #/ai links
@@ -191,7 +191,7 @@ export default function App() {
       <header className="top">
         <div className="top-l">
           <button type="button" className="burger" aria-label="Toggle menu" aria-expanded={isWatch || railOpen ? railOpen : !mini} onClick={toggleRail}><span /><span /><span /></button>
-          <a className="brand" href="#/" aria-label="DEV Tube home"><b>DEV</b>Tube</a>
+          <a className="brand" href="#/" aria-label="Cubicle home"><b>Cubicle</b></a>
         </div>
         <form className="search" role="search" onSubmit={(e) => { e.preventDefault(); const v = searchRef.current?.value.trim(); go(v ? `/browse?q=${encodeURIComponent(v)}` : "/browse"); searchRef.current?.blur(); }}>
           <span className="search-in"><input ref={searchRef} type="search" placeholder="Search videos, channels, topics" aria-label="Search videos" defaultValue={p0 === "browse" ? route.q.get("q") ?? "" : ""} key={p0 === "browse" ? route.q.get("q") ?? "" : "x"} /></span>

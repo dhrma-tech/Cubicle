@@ -180,7 +180,7 @@ export function TodayCard({ data }: { data: Data }) {
   if (!pool.length && !due && !week && !resume) {
     return (
       <aside className="today" aria-label="Today">
-        <div><h2>Today</h2><p>Set a goal and DEV Tube will line up what to watch for the time you have.</p></div>
+        <div><h2>Today</h2><p>Set a goal and Cubicle will line up what to watch for the time you have.</p></div>
         <a className="btn btn-primary" href="#/plan">Build a study plan</a>
       </aside>
     );
@@ -284,7 +284,7 @@ export function SkillsPage({ data }: { data: Data }) {
     const touched = stats.some((x) => x.d > 0);
     if (touched) stats.filter((x) => x.d === 0).slice(0, 3).forEach((x) => gaps.push({ id: x.n.id, title: x.n.title, sec: sec.title }));
   }
-  const text = `DEV Tube weekly report\nStudied ${fmtHM(r.cur)} this week (${fmtHM(r.prev)} last week). ${r.doneN} videos finished. ${r.streak} day study streak.${r.top.length ? ` Most time: ${r.top.map((t) => `${t.title} ${fmtHM(t.sec)}`).join(", ")}.` : ""}`;
+  const text = `Cubicle weekly report\nStudied ${fmtHM(r.cur)} this week (${fmtHM(r.prev)} last week). ${r.doneN} videos finished. ${r.streak} day study streak.${r.top.length ? ` Most time: ${r.top.map((t) => `${t.title} ${fmtHM(t.sec)}`).join(", ")}.` : ""}`;
   const delta = r.cur - r.prev;
   return (
     <div className="page">

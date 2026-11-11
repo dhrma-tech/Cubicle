@@ -30,7 +30,7 @@ const usePomo = () => useSyncExternalStore((cb) => { subs.add(cb); return () => 
 
 export function PomoChip() {
   const s = usePomo();
-  useEffect(() => { document.title = s.running ? `${fmtClock(s.left)} ${s.phase === "work" ? "focus" : "break"} · DEV Tube` : "DEV Tube"; return () => { document.title = "DEV Tube"; }; }, [s.running, s.left, s.phase]);
+  useEffect(() => { document.title = s.running ? `${fmtClock(s.left)} ${s.phase === "work" ? "focus" : "break"} · Cubicle` : "Cubicle"; return () => { document.title = "Cubicle"; }; }, [s.running, s.left, s.phase]);
   return (
     <span className={"pomo" + (s.running ? " on" : "") + (s.phase === "break" ? " brk" : "")} role="group" aria-label="Focus timer">
       <button type="button" className="pomo-main" onClick={() => (s.running ? pomo.pause() : pomo.start())} aria-label={s.running ? "Pause timer" : "Start timer"} title="25 min focus, 5 min break">

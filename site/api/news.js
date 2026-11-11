@@ -2,7 +2,7 @@
 // Lobsters) straight from their public APIs. Lab blogs and GitHub repos still come from the scheduled data refresh.
 import { createHash } from "node:crypto";
 
-const UA = { "user-agent": "Mozilla/5.0 (compatible; DEVTubeNews/1.0; +https://github.com/dhrma-tech/Dev-Tube)" };
+const UA = { "user-agent": "Mozilla/5.0 (compatible; CubicleNews/1.0; +https://github.com/dhrma-tech/Dev-Tube)" };
 const AI = /\b(ai|a\.i\.|llms?|gpt-?\d*|chatgpt|claude|anthropic|openai|gemini|deepmind|mistral|llama|qwen|deepseek|grok|transformers?|diffusion models?|neural|machine learning|deep learning|nvidia|cuda|inference|fine-?tun\w*|hugging ?face|pytorch|tensorflow|mcp|agentic|ai agents?|language models?|open[- ]weights?|sora|midjourney|alphafold|robotics)\b/i;
 
 const norm = (u) => (u || "").trim().toLowerCase().replace(/^https?:\/\/(www\.)?/, "").replace(/[?#].*$/, "").replace(/\/$/, "");

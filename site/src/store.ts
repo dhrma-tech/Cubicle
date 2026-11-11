@@ -59,7 +59,7 @@ export const actions = {
   exportJSON: () => JSON.stringify(state, null, 1),
   importJSON: (txt: string) => {
     const j = JSON.parse(txt);
-    if (typeof j !== "object" || !j) throw new Error("Not a DEV Tube backup file");
+    if (typeof j !== "object" || !j) throw new Error("Not a Cubicle backup file");
     const f = fresh();
     commit({ ...f, ...j, settings: { ...f.settings, ...(j.settings || {}) } });
   },

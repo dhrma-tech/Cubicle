@@ -1,6 +1,6 @@
 {
-  "name": "DEV Tube",
-  "short_name": "DEV Tube",
+  "name": "Cubicle",
+  "short_name": "Cubicle",
   "description": "A curated YouTube catalogue for AI, ML and AI engineering learners.",
   "start_url": "./#/",
   "scope": "./",

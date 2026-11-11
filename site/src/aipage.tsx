@@ -97,10 +97,10 @@ export function VideoCard({ item, data, chat }: { item: Extract<Item, { kind: "v
         <p className="ai-chips"><span>{node?.title ?? item.node}</span><span>{LEVEL_NAME[item.level]}</span></p>
         {item.note ? <p className="ai-pl-n">{item.note}</p> : null}
         {item.state === "added" ? (
-          <div className="ai-row"><span className="ai-saved">Added to your DEV Tube</span><a className="btn" href={`#/watch/${item.id}`}>Watch</a></div>
+          <div className="ai-row"><span className="ai-saved">Added to your Cubicle</span><a className="btn" href={`#/watch/${item.id}`}>Watch</a></div>
         ) : item.state === "skipped" ? <p className="ai-pl-n">Not added.</p> : (
           <div className="ai-row">
-            <button className="btn btn-primary" onClick={() => { addProposed(data, item); item.state = "added"; chat.touch(); toast("Added. Only you can see it."); }}>Add to my DEV Tube</button>
+            <button className="btn btn-primary" onClick={() => { addProposed(data, item); item.state = "added"; chat.touch(); toast("Added. Only you can see it."); }}>Add to my Cubicle</button>
             <button className="btn" onClick={() => { item.state = "skipped"; chat.touch(); }}>Not now</button>
           </div>
         )}
@@ -171,7 +171,7 @@ export function Playlists({ data }: { data: Data }) {
           <h2>Videos you added</h2>
           <ul>{u.mine.map((v) => (
             <li key={v.i}><a href={`#/watch/${v.i}`}>{v.t}</a><span>{v.c}</span>
-              <button className="ai-ghost" onClick={() => { userActions.removeVideo(v.i); toast("Removed from your DEV Tube"); }}>Remove</button></li>
+              <button className="ai-ghost" onClick={() => { userActions.removeVideo(v.i); toast("Removed from your Cubicle"); }}>Remove</button></li>
           ))}</ul>
         </section>
       ) : null}

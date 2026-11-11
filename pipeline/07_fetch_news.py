@@ -9,7 +9,7 @@ import requests
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "site", "public", "data", "news.json")
-UA = {"User-Agent": "Mozilla/5.0 (compatible; DEVTubeNews/1.0; +https://github.com/dhrma-tech/Dev-Tube)"}
+UA = {"User-Agent": "Mozilla/5.0 (compatible; CubicleNews/1.0; +https://github.com/dhrma-tech/Dev-Tube)"}
 NOW = time.time()
 H = 3600
 
