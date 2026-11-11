@@ -66,7 +66,7 @@ async function callGemini(body: Record<string, unknown>) {
   const key = geminiKey();
   let r: Response;
   try {
-    r = await fetch(key ? `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent` : "/api/chat", {
+    r = await fetch(key ? (key.startsWith("AQ.") ? `https://aiplatform.googleapis.com/v1/publishers/google/models/${MODEL}:generateContent` : `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`) : "/api/chat", {
       method: "POST", headers: { "content-type": "application/json", ...(key ? { "x-goog-api-key": key } : {}) },
       body: JSON.stringify(key ? { ...body, toolConfig: { functionCallingConfig: { mode: "AUTO" } } } : body),
       signal: AbortSignal.timeout(58_000),
@@ -81,6 +81,7 @@ async function callGemini(body: Record<string, unknown>) {
     if (r.status === 404 || r.status === 405 || !j) throw new AIError("no_proxy");
     if (r.status === 503) throw new AIError("not_configured");
     if (r.status === 504 || j.error === "timeout") throw new AIError("timeout");
+    if (j.error === "server_key") throw new AIError("server_key");
     if (r.status === 429) throw new AIError(j.error === "daily_limit" ? "daily_limit" : "quota");
   } else {
     if (r.status === 400 || r.status === 403) throw new AIError("bad_key");
@@ -95,6 +96,7 @@ const ERR: Record<string, { text: string; key?: boolean }> = {
   no_proxy: { text: "The shared AI is not available here (it only runs on the deployed site). Add your own free Gemini key to use it.", key: true },
   bad_key: { text: "Gemini rejected that key. Check it in AI Studio and paste it again.", key: true },
   quota: { text: "Gemini is rate limited right now. Wait a minute and try again, or add your own key for a separate limit.", key: true },
+  server_key: { text: "The site's Gemini key was rejected by Google. The site owner needs to check GEMINI_API_KEY. You can use your own key meanwhile.", key: true },
   timeout: { text: "The AI took too long to answer. Try again, or ask something shorter." },
   network: { text: "Could not reach the AI. Check your connection and try again." },
   blocked: { text: "Gemini declined to answer that. Try rewording it." },

@@ -2,6 +2,10 @@
 // Set GEMINI_API_KEY in Vercel (Settings, Environment Variables). Optional: GEMINI_MODEL, AI_DAILY_LIMIT.
 // The per-visitor limit is kept in memory, so it is best effort: it resets when the function restarts.
 const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// Keys starting with "AQ." are Vertex AI express-mode keys (Google Cloud), not AI Studio keys. They use a different host.
+const endpoint = (key) => key.startsWith("AQ.")
+  ? `https://aiplatform.googleapis.com/v1/publishers/google/models/${MODEL}:generateContent`
+  : `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 const LIMIT = Number(process.env.AI_DAILY_LIMIT || 60);
 const hits = new Map();
 
@@ -41,7 +45,7 @@ export default async function handler(req, res) {
     toolConfig: tools.length ? { functionCallingConfig: { mode: "AUTO" } } : undefined,
     generationConfig: { temperature: 0.4, maxOutputTokens: Math.min(Number(body.generationConfig?.maxOutputTokens) || 2048, 3000) },
   };
-  const call = (p) => fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+  const call = (p) => fetch(endpoint(key), {
     method: "POST",
     headers: { "content-type": "application/json", "x-goog-api-key": key },
     body: JSON.stringify(p),
@@ -55,6 +59,7 @@ export default async function handler(req, res) {
     const text = await r.text();
     res.setHeader("x-ai-ms", String(Date.now() - t0));
     if (r.status === 429) return res.status(429).json({ error: "quota" });
+    if (r.status === 401 || r.status === 403) return res.status(502).json({ error: "server_key", detail: text.slice(0, 300) });
     res.status(r.status).setHeader("content-type", "application/json").send(text);
   } catch (e) {
     res.status(e?.name === "TimeoutError" ? 504 : 502).json({ error: e?.name === "TimeoutError" ? "timeout" : "upstream" });
