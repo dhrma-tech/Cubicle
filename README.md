@@ -22,7 +22,7 @@ Inspired by Andrej Karpathy's [HackerTube](https://hackertube.org). DEV Tube nar
 
 ## Study Tools
 
-Everything below is local to the browser (key `devtube.study.v1`) unless you turn on sync.
+Everything below is local to the browser (key `devtube.study.v1`). Use Settings, Export progress to move it between devices.
 
 | Feature | Where |
 | --- | --- |
@@ -35,36 +35,6 @@ Everything below is local to the browser (key `devtube.study.v1`) unless you tur
 | Follow channels and topics, "New for you" feed | `#/following` |
 | Command palette (Ctrl or Cmd + K) | Everywhere |
 | Installable app and share target: share a YouTube link to DEV Tube and Ask AI proposes it | Browser install prompt |
-
-### Optional cross-device sync
-
-Sync stores one AES-GCM encrypted blob per passphrase. The key and the row id are derived in the browser (PBKDF2, 250k rounds), so the server never sees the passphrase or readable data. Without the two env vars below, Settings shows "Sync is not enabled on this site".
-
-1. Create a Supabase project and run:
-
-```sql
-create table public.sync_blobs (id text primary key, data text not null, updated_at timestamptz not null default now());
-alter table public.sync_blobs enable row level security; -- no policies: the table is closed to direct access
-
-create or replace function public.sync_get(p_id text) returns table(data text, updated_at timestamptz)
-language sql security definer set search_path = public as $$
-  select b.data, b.updated_at from public.sync_blobs b where b.id = p_id and p_id ~ '^[0-9a-f]{64}$';
-$$;
-create or replace function public.sync_put(p_id text, p_data text) returns timestamptz
-language plpgsql security definer set search_path = public as $$
-declare t timestamptz := now();
-begin
-  if p_id !~ '^[0-9a-f]{64}$' then raise exception 'bad_id'; end if;
-  if length(p_data) > 1500000 then raise exception 'too_large'; end if;
-  insert into public.sync_blobs(id, data, updated_at) values (p_id, p_data, t)
-  on conflict (id) do update set data = excluded.data, updated_at = excluded.updated_at;
-  return t;
-end $$;
-revoke all on function public.sync_get(text), public.sync_put(text, text) from public;
-grant execute on function public.sync_get(text), public.sync_put(text, text) to anon, authenticated, service_role;
-```
-
-2. In Vercel, add `SUPABASE_URL` (the project URL) and `SUPABASE_PUBLISHABLE_KEY` (the public anon or publishable key; no secret key is needed), then redeploy.
 
 ## Who This README Is For
 

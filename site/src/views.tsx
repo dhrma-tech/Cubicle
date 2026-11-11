@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Video } from "./types";
 import { actions, useStore } from "./store";
 import { study, useStudy } from "./study";
-import { SyncPanel } from "./sync";
 import { fmtDur, LEVEL_NAME, pathOrder, SHELF_NAME, type Data } from "./data";
 import { Actions, Empty, freshText, go, LevelTag, Thumb, Vouch, VideoRow, YtCard } from "./components";
 
@@ -475,7 +474,6 @@ export function SettingsPage() {
           <label key={t}><input type="radio" name="theme" checked={s.settings.theme === t} onChange={() => actions.setSettings({ theme: t })} /> {t === "auto" ? "Match my device" : t === "light" ? "Light" : "Dark"}</label>
         ))}
       </fieldset>
-      <SyncPanel />
       <fieldset className="set">
         <legend>Your data</legend>
         <p>{s.liked.length} liked, {s.later.length} in watch later, {Object.keys(s.done).length} done, {s.history.length} in history.</p>

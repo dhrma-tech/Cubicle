@@ -8,9 +8,6 @@
     },
     "api/video.js": {
       "maxDuration": 20
-    },
-    "api/sync.js": {
-      "maxDuration": 20
     }
   }
 }

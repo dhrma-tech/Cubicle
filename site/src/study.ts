@@ -127,7 +127,7 @@ export const study = {
     commit({ ...state, follows: { ...f, topics: f.topics.includes(n) ? f.topics.filter((x) => x !== n) : [...f.topics, n] } });
   },
   markSeen: () => commit({ ...state, follows: { ...state.follows, seen: Date.now() } }),
-  /* backup / sync */
+  /* backup */
   exportJSON: () => JSON.stringify(state),
   importJSON: (txt: string) => { const j = JSON.parse(txt); const f = fresh(); commit({ ...f, ...j, follows: { ...f.follows, ...(j.follows || {}) } }); },
   reset: () => commit(fresh()),
