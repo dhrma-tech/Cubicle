@@ -758,3 +758,49 @@ main:has(> .ai) { padding: 0; animation: none; overflow: hidden; }
   .ai-hero { padding-bottom: 4vh; }
 }
 @media (prefers-reduced-motion: reduce) { .ai-msg, .ai-card, .ai-key { animation: none; } .ai-status i { animation: none; opacity: .6; } .ai-scroll { scroll-behavior: auto; } }
+
+/* ===== polish: scrollbars, Pro-Scroll layout, foldable panel ===== */
+/* thin overlay scrollbars everywhere, no arrow buttons */
+* { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--ink) 26%, transparent) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--ink) 24%, transparent); border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
+*::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--ink) 42%, transparent); background-clip: padding-box; border: 2px solid transparent; }
+.rail, .sc-side { scrollbar-gutter: stable; }
+
+/* title block sits under the video, so it never covers the video's own captions */
+.sc-slide { container-type: size; align-items: center; padding: 0; gap: 18px; }
+.sc-col { --sh: min(calc(100cqh - 124px), 860px); display: flex; flex-direction: column; gap: 12px; width: calc(var(--sh) * 9 / 16); max-width: 100cqw; flex: none; }
+.sc-stage { height: var(--sh); width: 100%; max-height: none; aspect-ratio: auto; }
+.sc-info { position: static; padding: 0 4px; color: var(--ink); background: none; pointer-events: auto; min-height: 84px; }
+.sc-info h2 { font: 600 16px/1.35 var(--font-ui); margin: 8px 0 4px; -webkit-line-clamp: 2; color: var(--ink); }
+.sc-info p { color: var(--moss); opacity: 1; font-size: 13.5px; gap: 2px 12px; }
+.sc-info p b { color: var(--ink); font-weight: 600; }
+.sc-acts { align-self: flex-end; padding-bottom: 96px; }
+
+/* position pill instead of two loose arrow buttons */
+.sc-nav { flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 7%, transparent); backdrop-filter: blur(8px); }
+.sc-nav button { width: 38px; height: 38px; background: none; }
+.sc-nav button:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 12%, transparent); }
+.sc-nav span { display: flex; flex-direction: column; align-items: center; font-size: 11px; line-height: 1.25; color: var(--moss); padding: 2px 0; }
+.sc-nav span b { color: var(--ink); font-size: 13px; font-weight: 650; }
+.sc-nav span i { font-style: normal; border-top: 1px solid var(--line); margin-top: 2px; padding-top: 2px; }
+
+/* foldable panel */
+.sc { transition: grid-template-columns .26s var(--ease); }
+.sc.fold { grid-template-columns: 68px minmax(0, 1fr); }
+.sc-side { position: relative; }
+.sc-side.is-fold { padding: 14px 0; align-items: center; gap: 14px; overflow: hidden; }
+.sc-fold { align-self: flex-end; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: var(--moss); background: none; border: 0; transition: background .15s, color .15s; margin: -6px -6px -6px 0; }
+.sc-fold:hover { background: var(--wash); color: var(--ink); }
+.sc-side.is-fold .sc-fold { align-self: center; margin: 0; }
+
+@media (max-width: 1000px) {
+  .sc, .sc.fold { grid-template-columns: minmax(0, 1fr); }
+  .sc-col { --sh: calc(100cqh - 124px); width: 100cqw; gap: 10px; }
+  .sc-stage { border-radius: 0; }
+  .sc-info { padding: 0 82px 0 14px; }
+  .sc-acts { right: 8px; bottom: 128px; padding-bottom: 0; align-self: auto; }
+  .sc-unmute { top: 54px; }
+}

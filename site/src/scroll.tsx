@@ -81,6 +81,7 @@ function Slide(p: SlideProps) {
 
   return (
     <section className={"sc-slide" + (active ? " is-active" : "")} data-n={n} hidden={p.hidden} ref={(el) => p.reg(n, el)} aria-label={`${clean(s.t)}, by ${s.c}`}>
+      <div className="sc-col">
       <div className="sc-stage">
         {p.near ? <img className="sc-poster" src={`https://i.ytimg.com/vi/${s.i}/hqdefault.jpg`} alt="" loading={active ? "eager" : "lazy"} onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} /> : null}
         {active ? (
@@ -90,11 +91,12 @@ function Slide(p: SlideProps) {
         {active ? <button className="sc-hit" onClick={toggle} aria-label={paused ? "Play" : "Pause"} /> : null}
         {active && paused ? <span className="sc-pause" aria-hidden="true"><Ic n="play" /></span> : null}
         {active && !p.sound ? <button className="sc-unmute" onClick={p.onSound}><Ic n="mute" />Tap for sound</button> : null}
-        <div className="sc-info">
+      </div>
+      <div className="sc-info">
           <span className="sc-trk">{p.track}</span>
           <h2>{clean(s.t)}</h2>
           <p><b>{s.c}</b><span>{compact(s.v)} views</span><span>{age(s.p)}</span></p>
-        </div>
+      </div>
       </div>
       <div className="sc-acts">
         <button className={"sc-act" + (p.saved ? " on" : "")} onClick={p.onSave} aria-pressed={p.saved} title="Save (s)"><Ic n="save" /><span>{p.saved ? "Saved" : "Save"}</span></button>
@@ -119,6 +121,8 @@ export function Scroll({ q }: { q: URLSearchParams }) {
   const actRef = useRef(0); actRef.current = act;
   const [sound, setSound] = useState(false);
   const [done, setDone] = useState(false);
+  const [fold, setFold] = useState(() => { try { return localStorage.getItem("devtube.scroll.fold") === "1"; } catch { return false; } });
+  const toggleFold = () => setFold((f) => { const n = !f; try { localStorage.setItem("devtube.scroll.fold", n ? "1" : "0"); } catch { /* private mode */ } return n; });
   const feed = useRef<HTMLDivElement>(null);
   const els = useRef<(HTMLElement | null)[]>([]);
   const labels = useMemo(() => Object.fromEntries((data?.tracks ?? []).map((t) => [t.id, t.label])), [data]);
@@ -216,8 +220,15 @@ export function Scroll({ q }: { q: URLSearchParams }) {
   if (error) return <div className="page"><div className="empty"><h2>Could not load Pro-Scroll</h2><p>{error}. Check your connection and reload the page.</p></div></div>;
   if (!data) return <div className="page"><p className="loading" role="status">Loading Shorts…</p></div>;
 
-  const side = (
+  const chev = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={fold ? "M9 6l6 6-6 6" : "M15 6l-6 6 6 6"} /></svg>;
+  const side = fold ? (
+    <aside className="sc-side is-fold" aria-label="Pro-Scroll controls">
+      <button className="sc-fold" onClick={toggleFold} aria-label="Open the panel" aria-expanded="false" title="Open the panel">{chev}</button>
+      <Ring n={today} goal={ss.goal} size={44} />
+    </aside>
+  ) : (
     <aside className="sc-side" aria-label="Pro-Scroll controls">
+      <button className="sc-fold" onClick={toggleFold} aria-label="Fold the panel" aria-expanded="true" title="Fold the panel">{chev}</button>
       <div className="sc-goal">
         <Ring n={today} goal={ss.goal} />
         <div>
@@ -239,7 +250,7 @@ export function Scroll({ q }: { q: URLSearchParams }) {
   );
 
   return (
-    <div className="sc">
+    <div className={"sc" + (fold ? " fold" : "")}>
       {side}
       <div className="sc-main">
         <div className="sc-top" aria-label="Tracks">
@@ -267,6 +278,7 @@ export function Scroll({ q }: { q: URLSearchParams }) {
             </section>
             <div className="sc-nav" aria-label="Move between Shorts">
               <button onClick={() => goTo(act - 1, -1)} aria-label="Previous Short" disabled={act <= 0}><Ic n="up" /></button>
+              <span aria-live="off"><b>{Math.min(act + 1, deck.length)}</b><i>{deck.length}</i></span>
               <button onClick={() => goTo(act + 1, 1)} aria-label="Next Short" disabled={act >= deck.length}><Ic n="down" /></button>
             </div>
           </div>

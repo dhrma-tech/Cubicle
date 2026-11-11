@@ -60,7 +60,7 @@ export default function App() {
   const route = useRoute();
   const st = useStore();
   const [railOpen, setRailOpen] = useState(false);
-  const [mini, setMini] = useState(() => { try { return localStorage.getItem("devtube.mini") === "1"; } catch { return false; } });
+  const [mini, setMini] = useState(() => { try { return localStorage.getItem("devtube.rail") !== "full"; } catch { return true; } });
   const [help, setHelp] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const sel = useRef(-1);
@@ -98,7 +98,7 @@ export default function App() {
       switch (e.key) {
         case "/": e.preventDefault(); searchRef.current?.focus(); break;
         case "?": setHelp((h) => !h); break;
-        case "Escape": setHelp(false); break;
+        case "Escape": setHelp(false); setRailOpen(false); break;
         case "g": gPending.current = true; setTimeout(() => { gPending.current = false; }, 900); break;
         case "j": select(sel.current + 1); break;
         case "k": select(sel.current - 1); break;
@@ -114,10 +114,10 @@ export default function App() {
 
   const [p0, p1] = route.path;
   const active = p0 || "home";
-  const isWatch = p0 === "watch";
+  const isWatch = p0 === "watch" || p0 === "scroll" || p0 === "ai"; // immersive pages: the sidebar is a hidden drawer, like YouTube's watch page
   const toggleRail = () => {
     if (isWatch || matchMedia("(max-width: 860px)").matches) { setRailOpen((o) => !o); return; }
-    setMini((m) => { const n = !m; try { localStorage.setItem("devtube.mini", n ? "1" : "0"); } catch { /* private mode */ } return n; });
+    setMini((m) => { const n = !m; try { localStorage.setItem("devtube.rail", n ? "mini" : "full"); } catch { /* private mode */ } return n; });
   };
   const link = (href: string, label: string, key: string, icon: string, count?: number, on = active === key, short?: string) => (
     <a href={href} className={"nav" + (on ? " on" : "")} aria-current={on ? "page" : undefined} title={label}>
